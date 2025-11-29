@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书本详情</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-light: #a78bfa;
+            --primary-dark: #7c3aed;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            
+            --font-title: 'Noto Serif SC', serif;
+            --font-body: 'Noto Sans SC', sans-serif;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background 0.8s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #0c1220 0%, #1a2335 100%);
+            color: #e2e8f0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部导航 */
+        header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        
+        body.dark-mode header {
+            background: rgba(15, 23, 42, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: var(--font-title);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            color: var(--primary);
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark);
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        body.dark-mode .back-btn {
+            color: #e2e8f0;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .back-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* 主要内容 */
+        main {
+            padding: 30px 0 60px;
+        }
+        
+        /* 书籍详情区域 */
+        .book-detail {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        body.dark-mode .book-detail {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .book-cover {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.5s ease;
+        }
+        
+        .book-cover:hover {
+            transform: scale(1.03);
+        }
+        
+        .book-info {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .book-title {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: var(--font-title);
+            line-height: 1.2;
+            color: var(--dark);
+        }
+        
+        body.dark-mode .book-title {
+            color: #e2e8f0;
+        }
+        
+        .book-author {
+            font-size: 18px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .book-meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--gray);
+            background: rgba(248, 250, 252, 0.8);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        
+        body.dark-mode .meta-item {
+            background: rgba(51, 65, 85, 0.8);
+        }
+        
+        .book-tag {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .book-heat {
+            color: var(--accent);
+        }
+        
+        .book-description {
+            margin-top: 10px;
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        
+        body.dark-mode .book-description {
+            color: #e2e8f0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray);
+            color: var(--dark);
+        }
+        
+        body.dark-mode .btn-outline {
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+        
+        .btn-outline:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        /* 章节列表区域 */
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-family: var(--font-title);
+            position: relative;
+            padding-left: 16px;
+        }
+        
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .chapters-container {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        body.dark-mode .chapters-container {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .chapter-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
+        }
+        
+        .chapter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: 8px;
+            background: rgba(248, 250, 252, 0.8);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        
+        body.dark-mode .chapter-item {
+            background: rgba(51, 65, 85, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        
+        .chapter-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .chapter-title {
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        body.dark-mode .chapter-title {
+            color: #e2e8f0;
+        }
+        
+        .vip-badge {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: var(--darker);
+            color: #94a3b8;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--primary-light);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .book-detail {
+                grid-template-columns: 200px 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .book-detail {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .book-cover {
+                max-width: 240px;
+                margin: 0 auto;
+            }
+            
+            .book-meta {
+                justify-content: center;
+            }
+            
+            .chapter-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .book-title {
+                font-size: 24px;
+            }
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>小说精品屋</span>
+                </div>
+                <a href="/" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    返回首页
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container">
+        <!-- 书籍详情 -->
+        <section class="book-detail">
+            <img id="cover" class="book-cover" src="https://placehold.co/240x320" alt="小说封面">
+            <div class="book-info">
+                <h1 id="title" class="book-title"></h1>
+                <div id="author" class="book-author">
+                    <i class="fas fa-user-edit"></i>
+                    作者：
+                </div>
+                <div class="book-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <span id="tag"></span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-fire"></i>
+                        <span id="heat"></span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-list-ol"></i>
+                        <span id="chapterCount"></span>
+                    </div>
+                </div>
+                <p id="desc" class="book-description"></p>
+                <div class="action-buttons">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-book-open"></i>
+                        开始阅读
+                    </button>
+                    <button class="btn btn-outline">
+                        <i class="fas fa-bookmark"></i>
+                        加入书架
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 章节列表 -->
+        <h2 class="section-title">章节列表</h2>
+        <div class="chapters-container">
+            <div class="chapter-list" id="chapters">
+                <!-- 章节项将通过JS动态生成 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>关于我们</h3>
+                    <ul>
+                        <li><a href="#">网站简介</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">加入我们</a></li>
+                        <li><a href="#">友情链接</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>读者服务</h3>
+                    <ul>
+                        <li><a href="#">帮助中心</a></li>
+                        <li><a href="#">用户协议</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">反馈建议</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>作家服务</h3>
+                    <ul>
+                        <li><a href="#">作家专区</a></li>
+                        <li><a href="#">投稿指南</a></li>
+                        <li><a href="#">签约流程</a></li>
+                        <li><a href="#">作家福利</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>关注我们</h3>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-weibo"></i> 微博</a></li>
+                        <li><a href="#"><i class="fab fa-weixin"></i> 微信公众号</a></li>
+                        <li><a href="#"><i class="fab fa-qq"></i> QQ群</a></li>
+                        <li><a href="#"><i class="fab fa-github"></i> GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2023 小说精品屋 版权所有 | 设计制作：前端开发团队</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function q(k){ const u = new URL(location.href); return u.searchParams.get(k) }
+        function fmtHeat(n){ n = Number(n||0); if(n>=10000) return (Math.round(n/1000)/10).toFixed(1)+'万'; return String(n) }
+        function pick(obj){ for(let i=1;i<arguments.length;i++){ const v=obj&&obj[arguments[i]]; if(v!==undefined&&v!==null) return v } return '' }
+
+        document.addEventListener('DOMContentLoaded', function(){
+            const bid = Number(q('bookId'))||0;
+            if(!bid){ /* 保留空白占位 */ return; }
+
+            const coverEl = document.getElementById('cover');
+            const titleEl = document.getElementById('title');
+            const authorEl = document.getElementById('author');
+            const tagEl = document.getElementById('tag');
+            const heatEl = document.getElementById('heat');
+            const countEl = document.getElementById('chapterCount');
+            const descEl = document.getElementById('desc');
+            const wrap = document.getElementById('chapters');
+
+            try {
+                const cached = JSON.parse(localStorage.getItem('last_book_detail')||'null');
+                if (cached) {
+                    coverEl.src = pick(cached,'cover','Cover') || coverEl.src;
+                    titleEl.textContent = pick(cached,'title','Title','bookName','BookName');
+                    authorEl.innerHTML = '<i class="fas fa-user-edit"></i> 作者：' + pick(cached,'author','Author');
+                    tagEl.textContent = pick(cached,'tag','Tag');
+                    heatEl.textContent = fmtHeat(pick(cached,'heat','Heat')) + '热度';
+                    descEl.textContent = pick(cached,'desc','Desc');
+                }
+            } catch(e){}
+
+            fetch('/book/showBookById?bookId='+bid).then(r=>r.json()).then(resp=>{
+                const d = resp && (resp.data || resp) || {};
+                coverEl.src = pick(d,'cover','Cover') || coverEl.src;
+                titleEl.textContent = pick(d,'title','Title','bookName','BookName');
+                authorEl.innerHTML = '<i class="fas fa-user-edit"></i> 作者：' + pick(d,'author','Author');
+                tagEl.textContent = pick(d,'tag','Tag');
+                heatEl.textContent = fmtHeat(pick(d,'heat','Heat')) + '热度';
+                descEl.textContent = pick(d,'desc','Desc');
+            });
+
+            fetch('/book/listChapters?bookId='+bid).then(r=>r.json()).then(resp=>{
+                const list = Array.isArray(resp)?resp:(resp&&resp.data?resp.data:[]);
+                countEl.textContent = (list.length ? (list.length+'章') : '');
+                wrap.innerHTML = '';
+                list.forEach((c,i)=>{
+                    const div = document.createElement('div');
+                    div.className='chapter-item';
+                    const title = pick(c,'title','Title');
+                    const vip = Number(pick(c,'isVip','IsVIP'))===1;
+                    div.innerHTML = '<span class="chapter-title">第'+(i+1)+'章 '+title+'</span>' + '<span class="vip-badge">'+(vip?'VIP':'免费')+'</span>';
+                    wrap.appendChild(div);
+                })
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1133,11 +1133,22 @@
                 });
             }
 
+            function navigateToBook(id) {
+                if (!id) return;
+                fetch('/book/showBookById?bookId=' + id).then(r => r.json()).then(resp => {
+                    try { localStorage.setItem('last_book_detail', JSON.stringify(resp && (resp.data || resp))) } catch(e){}
+                    location.href = '/book.html?bookId=' + id;
+                }).catch(() => {
+                    location.href = '/book.html?bookId=' + id;
+                });
+            }
+
             fetch('/defaultPage/recommendations').then(r => r.json()).then(resp => {
                 const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
                 carouselContainer.innerHTML = '';
                 dotsWrap.innerHTML = '';
                 data.forEach(item => {
+                    const id = Number(pick(item, 'id', 'ID', 'bookId', 'BookID', 'bookID')) || 0;
                     const cover = pick(item, 'cover', 'Cover');
                     const title = pick(item, 'title', 'Title', 'bookName', 'BookName');
                     const author = pick(item, 'author', 'Author');
@@ -1147,7 +1158,7 @@
                     const el = document.createElement('div');
                     el.className = 'carousel-item';
                     el.innerHTML = `
-                        <div class="book-card">
+                        <div class="book-card" data-id="${id}" style="cursor:pointer">
                             <img src="${cover}" alt="小说封面" class="book-cover">
                             <div class="book-info">
                                 <h3 class="book-title">${title}</h3>
@@ -1169,11 +1180,19 @@
                 initCarousel();
             }).catch(() => initCarousel());
 
+            carouselContainer.addEventListener('click', function(e){
+                const card = e.target.closest('.book-card');
+                if (!card) return;
+                const id = Number(card.dataset.id) || 0;
+                navigateToBook(id);
+            });
+
             const rankingList = document.querySelectorAll('.ranking .ranking-list')[0];
             fetch('/defaultPage/rankings').then(r => r.json()).then(resp => {
                 const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
                 rankingList.innerHTML = '';
                 data.forEach((item, idx) => {
+                    const id = Number(pick(item, 'id', 'ID')) || 0;
                     const title = pick(item, 'title', 'Title', 'bookName', 'BookName');
                     const author = pick(item, 'author', 'Author');
                     const heat = Number(pick(item, 'heat', 'Heat')) || 0;
@@ -1189,6 +1208,7 @@
                         <div class="ranking-hot">
                             <i class="fas fa-fire"></i> ${formatHeat(heat)}
                         </div>`;
+                    li.onclick = function(){ navigateToBook(id) };
                     rankingList.appendChild(li);
                 });
             });
@@ -1198,6 +1218,7 @@
                 const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
                 newBooksList.innerHTML = '';
                 data.forEach((item, idx) => {
+                    const id = Number(pick(item, 'id', 'ID')) || 0;
                     const title = pick(item, 'title', 'Title', 'bookName', 'BookName');
                     const author = pick(item, 'author', 'Author');
                     const heat = Number(pick(item, 'heat', 'Heat')) || 0;
@@ -1213,6 +1234,7 @@
                         <div class="ranking-hot">
                             <i class="fas fa-fire"></i> ${formatHeat(heat)}
                         </div>`;
+                    li.onclick = function(){ navigateToBook(id) };
                     newBooksList.appendChild(li);
                 });
             });
