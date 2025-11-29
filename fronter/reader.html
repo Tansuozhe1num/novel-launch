@@ -1103,14 +1103,15 @@
                 return String(n);
             }
 
-            function pick(obj) {
-                for (let i = 1; i < arguments.length; i++) {
-                    const k = arguments[i];
-                    const v = obj && obj[k];
-                    if (v !== undefined && v !== null) return v;
-                }
-                return '';
+        function pick(obj) {
+            for (let i = 1; i < arguments.length; i++) {
+                const k = arguments[i];
+                const v = obj && obj[k];
+                if (v !== undefined && v !== null) return v;
             }
+            return '';
+        }
+        function getData(resp){ if(resp && typeof resp==='object' && 'code' in resp){ return resp.code===0 ? resp.data : null } return resp }
 
             function updateCarousel() {
                 carouselContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
@@ -1136,7 +1137,7 @@
             function navigateToBook(id) {
                 if (!id) return;
                 fetch('/book/showBookById?bookId=' + id).then(r => r.json()).then(resp => {
-                    try { localStorage.setItem('last_book_detail', JSON.stringify(resp && (resp.data || resp))) } catch(e){}
+                    try { localStorage.setItem('last_book_detail', JSON.stringify(getData(resp))) } catch(e){}
                     location.href = '/book.html?bookId=' + id;
                 }).catch(() => {
                     location.href = '/book.html?bookId=' + id;
@@ -1144,10 +1145,11 @@
             }
 
             fetch('/defaultPage/recommendations').then(r => r.json()).then(resp => {
-                const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
+                const data = getData(resp);
+                const list = Array.isArray(data) ? data : [];
                 carouselContainer.innerHTML = '';
                 dotsWrap.innerHTML = '';
-                data.forEach(item => {
+                list.forEach(item => {
                     const id = Number(pick(item, 'id', 'ID', 'bookId', 'BookID', 'bookID')) || 0;
                     const cover = pick(item, 'cover', 'Cover');
                     const title = pick(item, 'title', 'Title', 'bookName', 'BookName');
@@ -1175,7 +1177,7 @@
                     dot.className = 'carousel-dot';
                     dotsWrap.appendChild(dot);
                 });
-                itemCount = data.length;
+                itemCount = list.length;
                 if (dotsWrap.firstElementChild) dotsWrap.firstElementChild.classList.add('active');
                 initCarousel();
             }).catch(() => initCarousel());
@@ -1189,9 +1191,10 @@
 
             const rankingList = document.querySelectorAll('.ranking .ranking-list')[0];
             fetch('/defaultPage/rankings').then(r => r.json()).then(resp => {
-                const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
+                const data = getData(resp);
+                const list = Array.isArray(data) ? data : [];
                 rankingList.innerHTML = '';
-                data.forEach((item, idx) => {
+                list.forEach((item, idx) => {
                     const id = Number(pick(item, 'id', 'ID')) || 0;
                     const title = pick(item, 'title', 'Title', 'bookName', 'BookName');
                     const author = pick(item, 'author', 'Author');
@@ -1215,9 +1218,10 @@
 
             const newBooksList = document.querySelectorAll('.ranking .ranking-list')[1];
             fetch('/defaultPage/newBooksList').then(r => r.json()).then(resp => {
-                const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
+                const data = getData(resp);
+                const list = Array.isArray(data) ? data : [];
                 newBooksList.innerHTML = '';
-                data.forEach((item, idx) => {
+                list.forEach((item, idx) => {
                     const id = Number(pick(item, 'id', 'ID')) || 0;
                     const title = pick(item, 'title', 'Title', 'bookName', 'BookName');
                     const author = pick(item, 'author', 'Author');

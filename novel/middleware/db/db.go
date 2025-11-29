@@ -29,7 +29,9 @@ func Init(dsn string) error {
 	return nil
 }
 
-func Get() *gorm.DB { return DB }
+func Get() *gorm.DB {
+	return DB
+}
 
 func getenv(key, def string) string {
 	v := os.Getenv(key)

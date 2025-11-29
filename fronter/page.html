@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线阅读</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root{ --primary:#8b5cf6; --dark:#1e293b; --bg:#f8fafc }
+        body{ margin:0; font-family:system-ui; background:var(--bg); color:var(--dark) }
+        header{ position:sticky; top:0; z-index:10; background:#fff; border-bottom:1px solid #eee; padding:10px 14px; display:flex; align-items:center; gap:12px }
+        .container{ width:95%; max-width:1200px; margin:0 auto }
+        .title{ font-weight:700 }
+        .toolbar{ margin-left:auto; display:flex; gap:8px }
+        .btn{ border:1px solid #ddd; background:#fff; padding:6px 12px; border-radius:8px; cursor:pointer }
+        .btn.primary{ border-color:var(--primary); color:#fff; background:var(--primary) }
+        main{ display:grid; grid-template-columns: 280px 1fr; gap:16px; padding:16px }
+        .sidebar{ background:#fff; border:1px solid #eee; border-radius:12px; overflow:auto; max-height:calc(100vh - 80px) }
+        .chapter{ padding:10px 12px; border-bottom:1px dashed #eee; cursor:pointer }
+        .chapter.active{ background:rgba(139,92,246,.08) }
+        .reader{ background:#fff; border:1px solid #eee; border-radius:12px; padding:18px; line-height:1.9; white-space:pre-wrap; min-height:60vh }
+        .reader h1{ font-size:20px; margin:0 0 12px }
+        .nav{ display:flex; gap:8px; margin-top:12px }
+    </style>
+    </head>
+<body>
+    <header>
+        <div class="container" style="display:flex; align-items:center; gap:12px">
+            <a href="/" class="btn">首页</a>
+            <div id="bookTitle" class="title"></div>
+            <div id="bookAuthor" style="color:#64748b"></div>
+            <div class="toolbar">
+                <button id="prev" class="btn">上一章</button>
+                <button id="next" class="btn">下一章</button>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <div class="sidebar" id="chapterList"></div>
+        <div class="reader">
+            <h1 id="chapterTitle"></h1>
+            <div id="content"></div>
+            <div class="nav"><button id="prev2" class="btn">上一章</button><button id="next2" class="btn">下一章</button></div>
+        </div>
+    </main>
+
+    <script>
+        function q(k){ const u = new URL(location.href); return u.searchParams.get(k) }
+        function fetchJSON(url){ return fetch(url).then(r=>r.json()) }
+        function pick(o){ for(let i=1;i<arguments.length;i++){ const v=o&&o[arguments[i]]; if(v!==undefined&&v!==null) return v } return '' }
+        const bid = Number(q('bookId'))||0; let cid = Number(q('chapterId'))||0; let chapters=[]; let curIndex=0;
+
+        function loadBook(){
+            return fetchJSON('/book/showBookById?bookId='+bid).then(resp=>{
+                const d = resp && (resp.data||resp) || {};
+                document.getElementById('bookTitle').textContent = pick(d,'bookName');
+                document.getElementById('bookAuthor').textContent = '作者：'+pick(d,'author');
+            })
+        }
+        function loadChapters(){
+            return fetchJSON('/book/listChapters?bookId='+bid).then(resp=>{
+                chapters = Array.isArray(resp)?resp:(resp&&resp.data?resp.data:[]);
+                const list = document.getElementById('chapterList'); list.innerHTML='';
+                chapters.forEach((c,i)=>{
+                    const el = document.createElement('div'); el.className='chapter'; el.textContent = (i+1)+'. '+pick(c,'title'); el.dataset.id = pick(c,'id');
+                    el.onclick = function(){ cid = Number(el.dataset.id); curIndex = i; renderActive(); loadContent(); updateNav(); history.replaceState(null,'','/read.html?bookId='+bid+'&chapterId='+cid) }
+                    list.appendChild(el);
+                    if (!cid && i===0) { cid = Number(el.dataset.id); curIndex = 0 }
+                });
+                renderActive(); updateNav();
+            })
+        }
+        function loadContent(){
+            return fetchJSON('/book/chapterContent?bookId='+bid+'&chapterId='+cid).then(resp=>{
+                const d = resp && (resp.data||resp) || {}; const title = pick(chapters[curIndex],'title');
+                document.getElementById('chapterTitle').textContent = title || ('第'+(curIndex+1)+'章');
+                document.getElementById('content').textContent = pick(d,'content');
+            })
+        }
+        function renderActive(){
+            Array.from(document.querySelectorAll('.chapter')).forEach((e,idx)=>{ e.classList.toggle('active', idx===curIndex) })
+        }
+        function updateNav(){
+            document.getElementById('prev').disabled = (curIndex<=0); document.getElementById('prev2').disabled = (curIndex<=0);
+            document.getElementById('next').disabled = (curIndex>=chapters.length-1); document.getElementById('next2').disabled = (curIndex>=chapters.length-1);
+        }
+        function goPrev(){ if(curIndex>0){ curIndex--; cid = Number(pick(chapters[curIndex],'id')); renderActive(); loadContent(); updateNav(); history.replaceState(null,'','/read.html?bookId='+bid+'&chapterId='+cid) } }
+        function goNext(){ if(curIndex<chapters.length-1){ curIndex++; cid = Number(pick(chapters[curIndex],'id')); renderActive(); loadContent(); updateNav(); history.replaceState(null,'','/read.html?bookId='+bid+'&chapterId='+cid) } }
+        document.getElementById('prev').onclick = goPrev; document.getElementById('prev2').onclick = goPrev; document.getElementById('next').onclick = goNext; document.getElementById('next2').onclick = goNext;
+
+        Promise.resolve().then(loadBook).then(loadChapters).then(loadContent)
+    </script>
+</body>
+</html>

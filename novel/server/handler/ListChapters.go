@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"novel-launch/novel/middleware/db"
 	"novel-launch/novel/server/dao"
 
@@ -12,14 +13,23 @@ type ChapterItem struct {
 	Title string `json:"title"`
 	IsVIP int    `json:"isVip"`
 }
+type ListChapterReq struct {
+	BookId int64 `json:"bookId" form:"bookId"`
+}
 
-func ListChapters(ctx *gin.Context, bookId int64) (error, []ChapterItem) {
+func ListChapters(ctx *gin.Context, req ListChapterReq) (error, []ChapterItem) {
+	bookId := req.BookId
+	if bookId == 0 {
+		return fmt.Errorf("param bookId is required"), nil
+	}
+
 	d := dao.NewChapterDAO(db.Get())
 	list, err := d.ListByBook(ctx, bookId)
 	if err != nil {
 		return err, nil
 	}
 	ret := make([]ChapterItem, 0, len(list))
+
 	for _, c := range list {
 		ret = append(ret, ChapterItem{ID: c.ID, Title: c.Title, IsVIP: func(b bool) int {
 			if b {
@@ -28,5 +38,6 @@ func ListChapters(ctx *gin.Context, bookId int64) (error, []ChapterItem) {
 			return 0
 		}(c.IsVip)})
 	}
+
 	return nil, ret
 }

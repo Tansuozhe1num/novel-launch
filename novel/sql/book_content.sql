@@ -2,7 +2,7 @@ CREATE TABLE `book_content` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `book_id` BIGINT NOT NULL,
   `chapter_id` BIGINT NOT NULL,
-  `content` TEXT,
+  `content` MEDIUMTEXT,
   `create_time` BIGINT NOT NULL DEFAULT 0,
   `update_time` BIGINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),

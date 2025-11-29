@@ -20,10 +20,12 @@ func SetupRouter() *gin.Engine {
 	{
 		Book.GET("/showBookById", controller.ShowBookById)
 		Book.GET("/listChapters", controller.ListChapters)
+		Book.GET("/chapterContent", controller.GetChapterContent)
 	}
 
 	r.Static("/static", "../fronter")
 	r.StaticFile("/", "../fronter/reader.html")
 	r.StaticFile("/book.html", "../fronter/book.html")
+	r.StaticFile("/page.html", "../fronter/page.html")
 	return r
 }

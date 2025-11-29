@@ -14,6 +14,10 @@ type BookChapter struct {
 	UpdateTime int64  `gorm:"not null;default:0" json:"updateTime"`
 }
 
+func (BookChapter) TableName() string {
+	return "book_chapter"
+}
+
 func (b *BookChapter) BeforeCreate(tx *gorm.DB) error {
 	if b.CreateTime == 0 {
 		b.CreateTime = time.Now().Unix()
