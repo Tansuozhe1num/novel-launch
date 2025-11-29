@@ -13,13 +13,7 @@ func SetupRouter() *gin.Engine {
 	{
 		DefaultPage.GET("/recommendations", controller.GetRecommendations)
 		DefaultPage.GET("/rankings", controller.GetRankLists)
-	}
-
-	API := r.Group("/api")
-	{
-		API.GET("/recommendations", controller.GetRecommendations)
-		API.GET("/rankings", controller.GetRankLists)
-		API.GET("/newBooksList", controller.GetNewBooksList)
+		DefaultPage.GET("/newBooksList", controller.GetNewBooksList)
 	}
 
 	r.Static("/static", "../fronter")

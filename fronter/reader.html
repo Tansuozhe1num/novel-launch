@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小说精品屋 - 沉浸式阅读体验</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-light: #a78bfa;
+            --primary-dark: #7c3aed;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #10b981;
+
+            --font-title: 'Noto Serif SC', serif;
+            --font-body: 'Noto Sans SC', sans-serif;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background 0.8s ease;
+            position: relative;
+            overflow-x: hidden;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #0c1220 0%, #1a2335 100%);
+            color: #e2e8f0;
+        }
+
+        /* 背景动画容器 */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 蒲公英样式 */
+        .dandelion {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.3) 70%);
+            border-radius: 50%;
+            filter: blur(0.5px);
+            opacity: 0.7;
+            animation-name: float, sway;
+            animation-timing-function: ease-in-out, ease-in-out;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(-10vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        @keyframes sway {
+            0%, 100% { margin-left: 0; }
+            50% { margin-left: 20px; }
+        }
+
+        /* 星空样式 */
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 8s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部导航 */
+        header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        body.dark-mode header {
+            background: rgba(15, 23, 42, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: var(--font-title);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: logoPulse 3s infinite alternate;
+        }
+
+        @keyframes logoPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: var(--primary);
+            animation: logoIconRotate 5s infinite linear;
+        }
+
+        @keyframes logoIconRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::before, nav a.active::before {
+            width: 100%;
+        }
+
+        body.dark-mode nav a {
+            color: #e2e8f0;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray);
+            color: var(--dark);
+        }
+
+        body.dark-mode .btn-outline {
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+
+        .btn-outline:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--dark);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            animation: rotateToggle 2s infinite;
+        }
+
+        @keyframes rotateToggle {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        body.dark-mode .theme-toggle {
+            color: #e2e8f0;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            animation: none;
+            transform: rotate(180deg);
+        }
+
+        /* 主要内容区域 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        /* 推荐栏目 */
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-family: var(--font-title);
+            position: relative;
+            padding-left: 16px;
+            animation: slideInFromLeft 0.8s ease;
+        }
+
+        @keyframes slideInFromLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+            animation: expandHeight 0.8s ease;
+        }
+
+        @keyframes expandHeight {
+            from { height: 0; }
+            to { height: 100%; }
+        }
+
+        .recommendations {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        body.dark-mode .recommendations {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius);
+        }
+
+        .carousel-container {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            padding: 8px;
+        }
+
+        .book-card {
+            display: flex;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.8s;
+        }
+
+        .book-card:hover::before {
+            left: 100%;
+        }
+
+        body.dark-mode .book-card {
+            background: rgba(51, 65, 85, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .book-cover {
+            width: 120px;
+            height: 160px;
+            object-fit: cover;
+            flex-shrink: 0;
+            transition: transform 0.5s ease;
+        }
+
+        .book-card:hover .book-cover {
+            transform: scale(1.05);
+        }
+
+        .book-info {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .book-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: var(--font-title);
+            transition: color 0.3s ease;
+        }
+
+        .book-card:hover .book-title {
+            color: var(--primary);
+        }
+
+        .book-author {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .book-desc {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .book-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .book-tag {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .book-heat {
+            font-size: 13px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .book-card:hover .book-heat {
+            color: var(--accent);
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .carousel-dot::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: var(--primary);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .carousel-dot.active::after {
+            border-color: var(--primary-light);
+        }
+
+        /* 分类区域 */
+        .categories {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        body.dark-mode .categories {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .category-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .category-item {
+            background: rgba(248, 250, 252, 0.8);
+            padding: 12px 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            transition: left 0.5s;
+        }
+
+        .category-item:hover::before {
+            left: 100%;
+        }
+
+        body.dark-mode .category-item {
+            background: rgba(51, 65, 85, 0.8);
+        }
+
+        .category-item:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        /* 排行榜 */
+        .ranking {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        body.dark-mode .ranking {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ranking-list {
+            list-style: none;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ranking-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .ranking-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        body.dark-mode .ranking-item {
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+
+        .ranking-item:hover {
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 8px;
+            padding-left: 12px;
+            padding-right: 8px;
+        }
+
+        .ranking-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: rgba(226, 232, 240, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .ranking-number {
+            background: rgba(51, 65, 85, 0.8);
+        }
+
+        .ranking-number.top-3 {
+            background: var(--primary);
+            color: white;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .ranking-info {
+            flex: 1;
+        }
+
+        .ranking-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .ranking-item:hover .ranking-title {
+            color: var(--primary);
+        }
+
+        .ranking-author {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .ranking-hot {
+            font-size: 12px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .ranking-item:hover .ranking-hot {
+            transform: scale(1.1);
+        }
+
+        /* 页脚 */
+        footer {
+            background: var(--darker);
+            color: #94a3b8;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            animation: fadeIn 1s ease 0.6s both;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: #e2e8f0;
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .footer-column:hover h3::after {
+            width: 100%;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-column ul li:hover {
+            transform: translateX(5px);
+        }
+
+        .footer-column ul li a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-column ul li a i {
+            transition: transform 0.3s ease;
+        }
+
+        .footer-column ul li a:hover i {
+            transform: scale(1.2);
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--primary-light);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .user-actions {
+                margin-top: 8px;
+            }
+
+            .book-card {
+                flex-direction: column;
+            }
+
+            .book-cover {
+                width: 100%;
+                height: 200px;
+            }
+
+            .category-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景动画容器 -->
+    <div class="background-animation" id="backgroundAnimation"></div>
+
+    <!-- 头部导航 -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>小说精品屋</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active"><i class="fas fa-home"></i> 首页</a></li>
+                        <li><a href="#"><i class="fas fa-list"></i> 分类</a></li>
+                        <li><a href="#"><i class="fas fa-fire"></i> 热门</a></li>
+                        <li><a href="#"><i class="fas fa-history"></i> 最近更新</a></li>
+                        <li><a href="#"><i class="fas fa-bookmark"></i> 我的书架</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <button class="btn btn-outline"><i class="fas fa-search"></i> 搜索</button>
+                    <button class="btn btn-primary"><i class="fas fa-user"></i> 读者中心</button>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <div class="container">
+        <div class="main-content">
+            <!-- 左侧内容 -->
+            <div class="content-left">
+                <!-- 推荐栏目 -->
+                <section class="recommendations">
+                    <h2 class="section-title">精品推荐</h2>
+                    <div class="carousel">
+                        <div class="carousel-container"></div>
+                    </div>
+                    <div class="carousel-controls"></div>
+                </section>
+
+                <!-- 分类浏览 -->
+                <section class="categories">
+                    <h2 class="section-title">分类浏览</h2>
+                    <div class="category-list">
+                        <div class="category-item">玄幻</div>
+                        <div class="category-item">仙侠</div>
+                        <div class="category-item">都市</div>
+                        <div class="category-item">历史</div>
+                        <div class="category-item">科幻</div>
+                        <div class="category-item">悬疑</div>
+                        <div class="category-item">言情</div>
+                        <div class="category-item">武侠</div>
+                        <div class="category-item">游戏</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 右侧内容 -->
+            <div class="content-right">
+                <!-- 热门榜单 -->
+                <section class="ranking">
+                    <h2 class="section-title">热门榜单</h2>
+                    <ul class="ranking-list"></ul>
+                </section>
+
+                <!-- 新书榜单 -->
+                <section class="ranking">
+                    <h2 class="section-title">新书榜单</h2>
+                    <ul class="ranking-list"></ul>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>关于我们</h3>
+                    <ul>
+                        <li><a href="#">网站简介</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">加入我们</a></li>
+                        <li><a href="#">友情链接</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>读者服务</h3>
+                    <ul>
+                        <li><a href="#">帮助中心</a></li>
+                        <li><a href="#">用户协议</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">反馈建议</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>作家服务</h3>
+                    <ul>
+                        <li><a href="#">作家专区</a></li>
+                        <li><a href="#">投稿指南</a></li>
+                        <li><a href="#">签约流程</a></li>
+                        <li><a href="#">作家福利</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>关注我们</h3>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-weibo"></i> 微博</a></li>
+                        <li><a href="#"><i class="fab fa-weixin"></i> 微信公众号</a></li>
+                        <li><a href="#"><i class="fab fa-qq"></i> QQ群</a></li>
+                        <li><a href="#"><i class="fab fa-github"></i> GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2023 小说精品屋 版权所有 | 设计制作：前端开发团队</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 主题切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const backgroundAnimation = document.getElementById('backgroundAnimation');
+
+            // 检查本地存储的主题设置
+            const savedTheme = localStorage.getItem('novel-theme') || 'light';
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                createStars();
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                createDandelions();
+            }
+
+            // 切换主题
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+
+                if (body.classList.contains('dark-mode')) {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    localStorage.setItem('novel-theme', 'dark');
+                    backgroundAnimation.innerHTML = '';
+                    createStars();
+                } else {
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    localStorage.setItem('novel-theme', 'light');
+                    backgroundAnimation.innerHTML = '';
+                    createDandelions();
+                }
+            });
+
+            // 创建蒲公英动画
+            function createDandelions() {
+                for (let i = 0; i < 15; i++) {
+                    const dandelion = document.createElement('div');
+                    dandelion.className = 'dandelion';
+
+                    // 随机位置
+                    const left = Math.random() * 100;
+                    dandelion.style.left = `${left}%`;
+
+                    // 随机大小
+                    const size = Math.random() * 0.8 + 0.6;
+                    dandelion.style.transform = `scale(${size})`;
+
+                    // 随机动画时长
+                    const duration = Math.random() * 20 + 30;
+                    const delay = Math.random() * 15;
+                    dandelion.style.animationDuration = `${duration}s, ${Math.random() * 4 + 3}s`;
+                    dandelion.style.animationDelay = `${delay}s, ${Math.random() * 2}s`;
+
+                    backgroundAnimation.appendChild(dandelion);
+                }
+            }
+
+            // 创建星空动画
+            function createStars() {
+                for (let i = 0; i < 80; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+
+                    // 随机位置
+                    const left = Math.random() * 100;
+                    const top = Math.random() * 100;
+                    star.style.left = `${left}%`;
+                    star.style.top = `${top}%`;
+
+                    // 随机大小
+                    const size = Math.random() * 2 + 1;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+
+                    // 随机动画延迟
+                    const delay = Math.random() * 8;
+                    star.style.animationDelay = `${delay}s`;
+
+                    backgroundAnimation.appendChild(star);
+                }
+            }
+
+            const carouselContainer = document.querySelector('.carousel-container');
+            const dotsWrap = document.querySelector('.carousel-controls');
+            let currentIndex = 0;
+            let itemCount = 0;
+
+            function formatHeat(n) {
+                n = Number(n || 0);
+                if (n >= 10000) return (Math.round(n/1000)/10).toFixed(1) + '万';
+                return String(n);
+            }
+
+            function updateCarousel() {
+                carouselContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+                const dots = Array.from(dotsWrap.querySelectorAll('.carousel-dot'));
+                dots.forEach((dot, index) => dot.classList.toggle('active', index === currentIndex));
+            }
+
+            function initCarousel() {
+                updateCarousel();
+                setInterval(() => {
+                    if (itemCount === 0) return;
+                    currentIndex = (currentIndex + 1) % itemCount;
+                    updateCarousel();
+                }, 5000);
+                Array.from(dotsWrap.querySelectorAll('.carousel-dot')).forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        currentIndex = index;
+                        updateCarousel();
+                    });
+                });
+            }
+
+            fetch('/defaultPage/recommendations').then(r => r.json()).then(resp => {
+                const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
+                carouselContainer.innerHTML = '';
+                dotsWrap.innerHTML = '';
+                data.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'carousel-item';
+                    el.innerHTML = `
+                        <div class="book-card">
+                            <img src="${item.cover}" alt="小说封面" class="book-cover">
+                            <div class="book-info">
+                                <h3 class="book-title">${item.title || item.bookName}</h3>
+                                <p class="book-author">作者：${item.author}</p>
+                                <p class="book-desc">${item.desc || ''}</p>
+                                <div class="book-meta">
+                                    <span class="book-tag">${item.tag || ''}</span>
+                                    <span class="book-heat"><i class="fas fa-fire"></i> ${formatHeat(item.heat)}热度</span>
+                                </div>
+                            </div>
+                        </div>`;
+                    carouselContainer.appendChild(el);
+                    const dot = document.createElement('span');
+                    dot.className = 'carousel-dot';
+                    dotsWrap.appendChild(dot);
+                });
+                itemCount = data.length;
+                if (dotsWrap.firstElementChild) dotsWrap.firstElementChild.classList.add('active');
+                initCarousel();
+            }).catch(() => initCarousel());
+
+            const rankingList = document.querySelectorAll('.ranking .ranking-list')[0];
+            fetch('/defaultPage/rankings').then(r => r.json()).then(resp => {
+                const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
+                rankingList.innerHTML = '';
+                data.forEach((item, idx) => {
+                    const li = document.createElement('li');
+                    li.className = 'ranking-item';
+                    const top3 = idx < 3 ? ' top-3' : '';
+                    li.innerHTML = `
+                        <div class="ranking-number${top3}">${idx + 1}</div>
+                        <div class="ranking-info">
+                            <div class="ranking-title">${item.title || item.bookName}</div>
+                            <div class="ranking-author">${item.author}</div>
+                        </div>
+                        <div class="ranking-hot">
+                            <i class="fas fa-fire"></i> ${formatHeat(item.heat)}
+                        </div>`;
+                    rankingList.appendChild(li);
+                });
+            });
+
+            const newBooksList = document.querySelectorAll('.ranking .ranking-list')[1];
+            fetch('/api/newBooksList').then(r => r.json()).then(resp => {
+                const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
+                newBooksList.innerHTML = '';
+                data.forEach((item, idx) => {
+                    const li = document.createElement('li');
+                    li.className = 'ranking-item';
+                    const top3 = idx < 3 ? ' top-3' : '';
+                    li.innerHTML = `
+                        <div class="ranking-number${top3}">${idx + 1}</div>
+                        <div class="ranking-info">
+                            <div class="ranking-title">${item.title || item.bookName}</div>
+                            <div class="ranking-author">${item.author}</div>
+                        </div>
+                        <div class="ranking-hot">
+                            <i class="fas fa-fire"></i> ${formatHeat(item.heat)}
+                        </div>`;
+                    newBooksList.appendChild(li);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

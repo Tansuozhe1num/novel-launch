@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"novel-launch/novel/middleware/db"
-	models "novel-launch/novel/modells/db"
 	"os"
 )
 
@@ -28,9 +27,9 @@ func initdb() error {
 	if err := db.Init(dsn); err != nil {
 		return err
 	}
-	if err := db.Get().AutoMigrate(&models.Books{}); err != nil {
-		return err
-	}
+	//if err := db.Get().AutoMigrate(&models.Books{}, &models.BookChapter{}, &models.BookContent{}); err != nil {
+	//	return err
+	//}
 	log.Println("Database init Success")
 	return nil
 }
