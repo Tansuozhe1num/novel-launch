@@ -1103,6 +1103,15 @@
                 return String(n);
             }
 
+            function pick(obj) {
+                for (let i = 1; i < arguments.length; i++) {
+                    const k = arguments[i];
+                    const v = obj && obj[k];
+                    if (v !== undefined && v !== null) return v;
+                }
+                return '';
+            }
+
             function updateCarousel() {
                 carouselContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
                 const dots = Array.from(dotsWrap.querySelectorAll('.carousel-dot'));
@@ -1129,18 +1138,24 @@
                 carouselContainer.innerHTML = '';
                 dotsWrap.innerHTML = '';
                 data.forEach(item => {
+                    const cover = pick(item, 'cover', 'Cover');
+                    const title = pick(item, 'title', 'Title', 'bookName', 'BookName');
+                    const author = pick(item, 'author', 'Author');
+                    const desc = pick(item, 'desc', 'Desc');
+                    const tag = pick(item, 'tag', 'Tag');
+                    const heat = Number(pick(item, 'heat', 'Heat')) || 0;
                     const el = document.createElement('div');
                     el.className = 'carousel-item';
                     el.innerHTML = `
                         <div class="book-card">
-                            <img src="${item.cover}" alt="小说封面" class="book-cover">
+                            <img src="${cover}" alt="小说封面" class="book-cover">
                             <div class="book-info">
-                                <h3 class="book-title">${item.title || item.bookName}</h3>
-                                <p class="book-author">作者：${item.author}</p>
-                                <p class="book-desc">${item.desc || ''}</p>
+                                <h3 class="book-title">${title}</h3>
+                                <p class="book-author">作者：${author}</p>
+                                <p class="book-desc">${desc}</p>
                                 <div class="book-meta">
-                                    <span class="book-tag">${item.tag || ''}</span>
-                                    <span class="book-heat"><i class="fas fa-fire"></i> ${formatHeat(item.heat)}热度</span>
+                                    <span class="book-tag">${tag}</span>
+                                    <span class="book-heat"><i class="fas fa-fire"></i> ${formatHeat(heat)}热度</span>
                                 </div>
                             </div>
                         </div>`;
@@ -1159,38 +1174,44 @@
                 const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
                 rankingList.innerHTML = '';
                 data.forEach((item, idx) => {
+                    const title = pick(item, 'title', 'Title', 'bookName', 'BookName');
+                    const author = pick(item, 'author', 'Author');
+                    const heat = Number(pick(item, 'heat', 'Heat')) || 0;
                     const li = document.createElement('li');
                     li.className = 'ranking-item';
                     const top3 = idx < 3 ? ' top-3' : '';
                     li.innerHTML = `
                         <div class="ranking-number${top3}">${idx + 1}</div>
                         <div class="ranking-info">
-                            <div class="ranking-title">${item.title || item.bookName}</div>
-                            <div class="ranking-author">${item.author}</div>
+                            <div class="ranking-title">${title}</div>
+                            <div class="ranking-author">${author}</div>
                         </div>
                         <div class="ranking-hot">
-                            <i class="fas fa-fire"></i> ${formatHeat(item.heat)}
+                            <i class="fas fa-fire"></i> ${formatHeat(heat)}
                         </div>`;
                     rankingList.appendChild(li);
                 });
             });
 
             const newBooksList = document.querySelectorAll('.ranking .ranking-list')[1];
-            fetch('/api/newBooksList').then(r => r.json()).then(resp => {
+            fetch('/defaultPage/newBooksList').then(r => r.json()).then(resp => {
                 const data = Array.isArray(resp) ? resp : (resp && resp.data ? resp.data : []);
                 newBooksList.innerHTML = '';
                 data.forEach((item, idx) => {
+                    const title = pick(item, 'title', 'Title', 'bookName', 'BookName');
+                    const author = pick(item, 'author', 'Author');
+                    const heat = Number(pick(item, 'heat', 'Heat')) || 0;
                     const li = document.createElement('li');
                     li.className = 'ranking-item';
                     const top3 = idx < 3 ? ' top-3' : '';
                     li.innerHTML = `
                         <div class="ranking-number${top3}">${idx + 1}</div>
                         <div class="ranking-info">
-                            <div class="ranking-title">${item.title || item.bookName}</div>
-                            <div class="ranking-author">${item.author}</div>
+                            <div class="ranking-title">${title}</div>
+                            <div class="ranking-author">${author}</div>
                         </div>
                         <div class="ranking-hot">
-                            <i class="fas fa-fire"></i> ${formatHeat(item.heat)}
+                            <i class="fas fa-fire"></i> ${formatHeat(heat)}
                         </div>`;
                     newBooksList.appendChild(li);
                 });
