@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"novel-launch/novel/Biu"
 	"novel-launch/novel/Biu/const"
 	"novel-launch/novel/server/handler"
 )
@@ -9,15 +10,8 @@ import (
 func GetRankLists(c *gin.Context) {
 	err, rankList := handler.GetRankList(c, constance.RankCount)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"msg":  "error",
-			"data": nil,
-		})
+		Biu.Failed(c, constance.ParamServerErr, err.Error())
 		return
 	}
-
-	c.JSON(200, gin.H{
-		"msg":  "ok",
-		"data": rankList,
-	})
+	Biu.Success(c, rankList)
 }

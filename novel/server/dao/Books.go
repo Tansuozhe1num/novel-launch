@@ -41,3 +41,10 @@ func (d *BookDAO) GetNewBooks(ctx *gin.Context, limit int) ([]models.Books, erro
 		Find(&books).Error
 	return books, err
 }
+
+func (d *BookDAO) GetBookById(ctx *gin.Context, bookId int64) (models.Books, error) {
+	var book models.Books
+	err := d.db.Where("id = ?", bookId).
+		First(&book).Error
+	return book, err
+}

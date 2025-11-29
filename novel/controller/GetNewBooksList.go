@@ -2,20 +2,17 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"novel-launch/novel/Biu"
+	constance "novel-launch/novel/Biu/const"
 	"novel-launch/novel/server/handler"
 )
 
 func GetNewBooksList(c *gin.Context) {
 	err, newBooks := handler.GetNewBooksList(c)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"msg":  "获取最新小说列表失败",
-			"data": nil,
-		})
+		Biu.Failed(c, constance.ParamServerErr, err.Error())
+		return
 	}
 
-	c.JSON(200, gin.H{
-		"msg":  "",
-		"data": newBooks,
-	})
+	Biu.Success(c, newBooks)
 }

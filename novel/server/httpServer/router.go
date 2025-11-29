@@ -16,7 +16,14 @@ func SetupRouter() *gin.Engine {
 		DefaultPage.GET("/newBooksList", controller.GetNewBooksList)
 	}
 
+	Book := r.Group("/book") // 读书操作
+	{
+		Book.GET("/showBookById", controller.ShowBookById)
+		Book.GET("/listChapters", controller.ListChapters)
+	}
+
 	r.Static("/static", "../fronter")
 	r.StaticFile("/", "../fronter/reader.html")
+	r.StaticFile("/book.html", "../fronter/book.html")
 	return r
 }
