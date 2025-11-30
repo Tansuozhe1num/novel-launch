@@ -20,7 +20,7 @@ type RegisterRequest struct {
 func Register(ctx *gin.Context, req RegisterRequest) (httpCode int, code int, msg string) {
 	name := req.Name
 	userdb := dao.NewUserDAO(db.Get())
-	if user, err := userdb.GetUserByUID(ctx, name); err == nil {
+	if user, err := userdb.GetUserByUName(ctx, name); err == nil {
 		if user.UName == name {
 			return http.StatusOK, constance.UserNameExist, constance.UserNameExistMsg
 		}

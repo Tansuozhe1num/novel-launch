@@ -3,6 +3,7 @@ package httpServer
 import (
 	"novel-launch/novel/controller/book"
 	"novel-launch/novel/controller/user"
+	authjwt "novel-launch/novel/middleware/jwt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,6 +29,8 @@ func SetupRouter() *gin.Engine {
 	{
 		User.POST("/login", user.Login)
 		User.POST("/register", user.Register)
+		User.GET("/profile", authjwt.AuthJWT(), user.Profile)
+		User.POST("/logout", authjwt.AuthJWT(), user.Logout)
 	}
 
 	r.Static("/static", "../fronter")

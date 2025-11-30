@@ -20,6 +20,12 @@ func (d *UserDAO) GetUserByUID(ctx *gin.Context, uid string) (models.User, error
 	return user, err
 }
 
+func (d *UserDAO) GetUserByUName(ctx *gin.Context, name string) (models.User, error) {
+	var user models.User
+	err := d.db.WithContext(ctx).Where("u_name = ?", name).First(&user).Error
+	return user, err
+}
+
 func (d *UserDAO) CreateUser(ctx *gin.Context, user models.User) error {
 	return d.db.WithContext(ctx).Create(&user).Error
 }

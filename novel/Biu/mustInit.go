@@ -1,9 +1,9 @@
 package Biu
 
 import (
-	"fmt"
 	"log"
 	"novel-launch/novel/middleware/db"
+	redismw "novel-launch/novel/middleware/redis"
 	"os"
 )
 
@@ -13,24 +13,27 @@ func MustInit() error {
 		return err
 	}
 
+	if err := initredis(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func initdb() error {
-	user := getenv("DB_USER", "root")
-	pass := getenv("DB_PASS", "547055741")
-	host := getenv("DB_HOST", "127.0.0.1")
-	port := getenv("DB_PORT", "3306")
-	name := getenv("DB_NAME", "novel_launch")
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, pass, host, port, name)
-	log.Println("Dsn: ", dsn)
-	if err := db.Init(dsn); err != nil {
+	if err := db.Init(); err != nil {
 		return err
 	}
-	//if err := db.Get().AutoMigrate(&models.Books{}, &models.BookChapter{}, &models.BookContent{}); err != nil {
-	//	return err
-	//}
+
 	log.Println("Database init Success")
+	return nil
+}
+
+func initredis() error {
+	if err := redismw.Init(); err != nil {
+		return nil
+	}
+	log.Println("Redis init Success")
 	return nil
 }
 

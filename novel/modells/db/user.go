@@ -13,6 +13,6 @@ type User struct {
 	UpdateTime    int64  `gorm:"not null;default:0" json:"updateTime"`
 }
 
-func (User) TableName() string {
+func (*User) TableName() string {
 	return "user"
 }

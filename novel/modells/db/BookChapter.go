@@ -14,7 +14,7 @@ type BookChapter struct {
 	UpdateTime int64  `gorm:"not null;default:0" json:"updateTime"`
 }
 
-func (BookChapter) TableName() string {
+func (*BookChapter) TableName() string {
 	return "book_chapter"
 }
 

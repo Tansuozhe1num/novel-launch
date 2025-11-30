@@ -904,7 +904,7 @@
                 </nav>
                 <div class="user-actions">
                     <button class="btn btn-outline"><i class="fas fa-search"></i> 搜索</button>
-                    <button class="btn btn-primary"><i class="fas fa-user"></i> 读者中心</button>
+                    <button class="btn btn-primary" id="btnReaderCenter"><i class="fas fa-user"></i> 读者中心</button>
                     <button class="theme-toggle" id="themeToggle">
                         <i class="fas fa-moon"></i>
                     </button>
@@ -1010,7 +1010,18 @@
 
     <script>
         // 主题切换功能
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function(){
+            var btnRC = document.getElementById('btnReaderCenter');
+            function b64u(s){ s=(s||'').replace(/-/g,'+').replace(/_/g,'/'); var p=s.length%4; if(p) s+='='.repeat(4-p); try{ return atob(s) }catch(e){ return '' } }
+            function expired(t){ try{ var p=t.split('.')[1]; if(!p) return true; var o=JSON.parse(b64u(p)||'{}'); var e=Number(o.exp||0); return !e || Date.now()>=e*1000 }catch(e){ return true } }
+            if (btnRC) {
+                btnRC.addEventListener('click', function(){
+                    var tk = '';
+                    try { tk = localStorage.getItem('auth_token')||'' } catch(e){}
+                    if (tk && !expired(tk)) { location.href = '/static/readercentor.html' }
+                    else { try{ localStorage.removeItem('auth_token'); localStorage.removeItem('last_user_name') }catch(e){}; location.href = '/static/auth.html' }
+                });
+            }
             const themeToggle = document.getElementById('themeToggle');
             const body = document.body;
             const backgroundAnimation = document.getElementById('backgroundAnimation');
