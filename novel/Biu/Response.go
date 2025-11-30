@@ -28,3 +28,17 @@ func Failed(c *gin.Context, code int, msg string) {
 func JSON(ctx *gin.Context, status int, resp gin.H) {
 	ctx.JSON(status, resp)
 }
+
+func ResponseMsg(ctx *gin.Context, status int, code int, msg string) {
+	ctx.JSON(status, gin.H{
+		"code": code,
+		"msg":  msg,
+	})
+}
+func ResponseData(ctx *gin.Context, status int, code, msg string, data interface{}) {
+	ctx.JSON(status, gin.H{
+		"code": code,
+		"msg":  msg,
+		"data": data,
+	})
+}

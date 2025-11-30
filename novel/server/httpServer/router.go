@@ -1,7 +1,8 @@
 package httpServer
 
 import (
-	"novel-launch/novel/controller"
+	"novel-launch/novel/controller/book"
+	"novel-launch/novel/controller/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,16 +12,22 @@ func SetupRouter() *gin.Engine {
 
 	DefaultPage := r.Group("/defaultPage")
 	{
-		DefaultPage.GET("/recommendations", controller.GetRecommendations)
-		DefaultPage.GET("/rankings", controller.GetRankLists)
-		DefaultPage.GET("/newBooksList", controller.GetNewBooksList)
+		DefaultPage.GET("/recommendations", book.GetRecommendations)
+		DefaultPage.GET("/rankings", book.GetRankLists)
+		DefaultPage.GET("/newBooksList", book.GetNewBooksList)
 	}
 
 	Book := r.Group("/book") // 读书操作
 	{
-		Book.GET("/showBookById", controller.ShowBookById)
-		Book.GET("/listChapters", controller.ListChapters)
-		Book.GET("/chapterContent", controller.GetChapterContent)
+		Book.GET("/showBookById", book.ShowBookById)
+		Book.GET("/listChapters", book.ListChapters)
+		Book.GET("/chapterContent", book.GetChapterContent)
+	}
+
+	User := r.Group("/user")
+	{
+		User.POST("/login", user.Login)
+		User.POST("/register", user.Register)
 	}
 
 	r.Static("/static", "../fronter")

@@ -1,9 +1,9 @@
-package handler
+package bookHandle
 
 import (
 	"github.com/gin-gonic/gin"
 	"novel-launch/novel/middleware/db"
-	models "novel-launch/novel/modells/db"
+	"novel-launch/novel/modells/db"
 	"novel-launch/novel/server/dao"
 	"strconv"
 )

@@ -1,16 +1,16 @@
-package controller
+package book
 
 import (
 	"net/http"
 	"novel-launch/novel/Biu"
 	constance "novel-launch/novel/Biu/const"
-	"novel-launch/novel/server/handler"
+	"novel-launch/novel/server/handler/bookHandle"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetChapterContent(ctx *gin.Context) {
-	var req handler.ChapterContentRequest
+	var req bookHandle.ChapterContentRequest
 	if ctx.Request.Method == http.MethodGet {
 		_ = ctx.ShouldBindQuery(&req)
 	} else {
@@ -23,7 +23,7 @@ func GetChapterContent(ctx *gin.Context) {
 		Biu.Failed(ctx, constance.ParamErr, constance.ParamErrMsg)
 		return
 	}
-	if err, resp := handler.GetChapterContent(ctx, req); err != nil {
+	if err, resp := bookHandle.GetChapterContent(ctx, req); err != nil {
 		Biu.Failed(ctx, constance.ParamServerErr, constance.ParamServerErrMsg)
 		return
 	} else {

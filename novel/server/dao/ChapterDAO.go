@@ -3,7 +3,7 @@ package dao
 import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	models "novel-launch/novel/modells/db"
+	"novel-launch/novel/modells/db"
 )
 
 type ChapterDAO struct {

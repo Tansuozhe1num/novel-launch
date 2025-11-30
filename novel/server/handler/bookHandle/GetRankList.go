@@ -1,4 +1,4 @@
-package handler
+package bookHandle
 
 import (
 	"novel-launch/novel/middleware/db"
