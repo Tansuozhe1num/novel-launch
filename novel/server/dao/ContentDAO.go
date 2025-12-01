@@ -6,9 +6,13 @@ import (
 	"novel-launch/novel/modells/db"
 )
 
-type ContentDAO struct{ db *gorm.DB }
+type ContentDAO struct {
+	db *gorm.DB
+}
 
-func NewContentDAO(db *gorm.DB) *ContentDAO { return &ContentDAO{db: db} }
+func NewContentDAO(db *gorm.DB) *ContentDAO {
+	return &ContentDAO{db: db}
+}
 
 func (d *ContentDAO) GetByChapter(ctx *gin.Context, bookId int64, chapterId int64) (models.BookContent, error) {
 	var c models.BookContent

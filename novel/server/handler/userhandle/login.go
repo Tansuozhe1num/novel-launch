@@ -36,7 +36,7 @@ func Login(ctx *gin.Context, req LoginRequest) LoginResponse {
 		return resp
 	}
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)) != nil {
-		resp.Code = constance.UserPassWordFormatErr
+		resp.Code = constance.UserPassWordErr
 		resp.Msg = constance.UserPassWordFormatErrMsg
 		return resp
 	}
@@ -47,10 +47,10 @@ func Login(ctx *gin.Context, req LoginRequest) LoginResponse {
 		return resp
 	}
 	user.Token = token
-	_ = d.UpdateUser(ctx, user)
 	if r := redismw.Get(); r != nil {
 		_ = r.Set(context.Background(), "user:token:"+strconv.FormatUint(user.UID, 10), token, 7*24*time.Hour).Err()
 	}
+	_ = d.UpdateUser(ctx, user)
 	resp.Code = constance.Success
 	resp.Msg = constance.SuccessMsg
 	resp.Token = token
