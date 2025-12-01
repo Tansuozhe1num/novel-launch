@@ -34,8 +34,9 @@ func SetupRouter() *gin.Engine {
 	}
 
 	r.Static("/static", "../fronter")
-	r.StaticFile("/", "../fronter/reader.html")
+	r.StaticFile("/", "../fronter/index.html")
 	r.StaticFile("/book.html", "../fronter/book.html")
 	r.StaticFile("/page.html", "../fronter/page.html")
+	r.StaticFile("/readercentor.html", "../fronter/readercentor.html")
 	return r
 }

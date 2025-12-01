@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新建作品 - 小说精品屋</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-light: #a78bfa;
+            --primary-dark: #7c3aed;
+            --secondary: #06d6a0;
+            --accent: #f59e0b;
+            --creative: #ec4899;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+
+            --font-title: 'Noto Serif SC', serif;
+            --font-body: 'Noto Sans SC', sans-serif;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background 0.8s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #0c1220 0%, #1a2335 100%);
+            color: #e2e8f0;
+        }
+
+        /* 背景动画容器 */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 创意粒子样式 */
+        .creative-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: floatCreative 15s infinite linear;
+        }
+
+        @keyframes floatCreative {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* 星空样式 */
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 8s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部导航 */
+        header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode header {
+            background: rgba(15, 23, 42, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: var(--font-title);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body.dark-mode nav a {
+            color: #e2e8f0;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gray);
+            color: var(--dark);
+        }
+
+        body.dark-mode .btn-outline {
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+
+        .btn-outline:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-creative {
+            background: var(--creative);
+            color: white;
+        }
+
+        .btn-creative:hover {
+            background: #db2777;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #0da271;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: none;
+            color: var(--dark);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .theme-toggle {
+            color: #e2e8f0;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            transform: rotate(180deg);
+        }
+
+        /* 新建作品主要内容 */
+        .create-container {
+            padding: 40px 0;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: var(--font-title);
+            background: linear-gradient(90deg, var(--creative), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--creative), var(--primary));
+            border-radius: 2px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: var(--gray);
+            margin-top: 10px;
+            max-width: 600px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* 表单容器 */
+        .form-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 992px) {
+            .form-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 表单区域 */
+        .form-section {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 20px;
+        }
+
+        body.dark-mode .form-section {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .form-section h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-family: var(--font-title);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        body.dark-mode .form-section h2 {
+            color: #e2e8f0;
+        }
+
+        .form-section h2 i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        body.dark-mode .form-label {
+            color: #e2e8f0;
+        }
+
+        .required::after {
+            content: ' *';
+            color: var(--error);
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            border: 1px solid #cbd5e1;
+            font-family: var(--font-body);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(248, 250, 252, 0.8);
+            color: var(--dark);
+        }
+
+        body.dark-mode .form-input,
+        body.dark-mode .form-textarea,
+        body.dark-mode .form-select {
+            background: rgba(51, 65, 85, 0.8);
+            border-color: #475569;
+            color: #e2e8f0;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .word-count {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        /* 封面上传区域 */
+        .cover-upload {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .cover-upload {
+            border-color: #475569;
+        }
+
+        .cover-upload:hover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .cover-upload i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .cover-upload p {
+            margin-bottom: 12px;
+            color: var(--gray);
+        }
+
+        .cover-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .cover-preview {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .cover-preview img {
+            max-width: 200px;
+            max-height: 280px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin: 0 auto;
+            display: block;
+        }
+
+        .cover-preview.active {
+            display: block;
+        }
+
+        /* 标签选择区域 */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: #e2e8f0;
+            color: var(--dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        body.dark-mode .tag {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .tag:hover {
+            background: var(--primary-light);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tag.selected {
+            background: var(--primary);
+            color: white;
+        }
+
+        .tag-input-container {
+            position: relative;
+            margin-top: 12px;
+        }
+
+        .tag-input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            border: 1px solid #cbd5e1;
+            font-family: var(--font-body);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: rgba(248, 250, 252, 0.8);
+            color: var(--dark);
+        }
+
+        body.dark-mode .tag-input {
+            background: rgba(51, 65, 85, 0.8);
+            border-color: #475569;
+            color: #e2e8f0;
+        }
+
+        .tag-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        .tag-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .tag-suggestions {
+            background: var(--darker);
+        }
+
+        .tag-suggestion {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        body.dark-mode .tag-suggestion {
+            color: #e2e8f0;
+        }
+
+        .tag-suggestion:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* 预览区域 */
+        .preview-section {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        body.dark-mode .preview-section {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .preview-title {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: var(--font-title);
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        body.dark-mode .preview-title {
+            color: #e2e8f0;
+        }
+
+        .preview-author {
+            color: var(--gray);
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .preview-cover {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .preview-description {
+            color: var(--dark);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .preview-description {
+            color: #e2e8f0;
+        }
+
+        .preview-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .preview-tag {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .preview-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray);
+            font-size: 14px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        body.dark-mode .preview-meta {
+            border-top-color: #334155;
+        }
+
+        /* 表单操作按钮 */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            grid-column: 1 / -1;
+        }
+
+        body.dark-mode .form-actions {
+            border-top-color: #334155;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: var(--dark);
+        }
+
+        body.dark-mode .btn-secondary {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        body.dark-mode .btn-secondary:hover {
+            background: #475569;
+        }
+
+        /* 提示信息 */
+        .hint {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            background: rgba(6, 214, 160, 0.1);
+            border-radius: var(--radius);
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--dark);
+        }
+
+        body.dark-mode .hint {
+            background: rgba(6, 214, 160, 0.2);
+            color: #e2e8f0;
+        }
+
+        .hint i {
+            color: var(--success);
+            margin-top: 2px;
+        }
+
+        /* 页脚 */
+        footer {
+            background: var(--darker);
+            color: #94a3b8;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-column h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--primary-light);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .user-actions {
+                margin-top: 8px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .user-actions .btn {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景动画容器 -->
+    <div class="background-animation" id="backgroundAnimation"></div>
+
+    <!-- 头部导航 -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>小说精品屋</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="/static/index.html"><i class="fas fa-home"></i> 首页</a></li>
+                        <li><a href="#"><i class="fas fa-list"></i> 分类</a></li>
+                        <li><a href="/static/create-work.html" class="active"><i class="fas fa-pen-fancy"></i> 创作服务</a></li>
+                        <li><a href="#"><i class="fas fa-chart-line"></i> 数据统计</a></li>
+                        <li><a href="#"><i class="fas fa-bookmark"></i> 我的书架</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <button class="btn btn-outline"><i class="fas fa-search"></i> 搜索</button>
+                    <button class="btn btn-primary" id="btnReaderCenter"><i class="fas fa-user"></i> 读者中心</button>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 新建作品主要内容 -->
+    <div class="create-container container">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">新建作品</h1>
+                <p class="page-subtitle">填写作品信息，右侧实时预览作品展示效果。所有标有 * 的字段为必填项。</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" id="btnBack">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </button>
+                <button class="btn btn-outline">
+                    <i class="fas fa-question-circle"></i> 帮助
+                </button>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <!-- 左侧表单区域 -->
+            <div class="left-form">
+                <!-- 作品基本信息 -->
+                <div class="form-section" id="basicInfoSection">
+                    <h2><i class="fas fa-info-circle"></i> 作品基本信息</h2>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="workTitle">作品名称</label>
+                        <input type="text" id="workTitle" class="form-input" placeholder="请输入作品名称，建议4-20个字符" maxlength="50">
+                        <div class="word-count" id="titleCount">0/50</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="workAuthor">作者笔名</label>
+                        <input type="text" id="workAuthor" class="form-input" placeholder="请输入作者笔名" value="墨染星辰" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="workDescription">作品简介</label>
+                        <textarea id="workDescription" class="form-textarea" placeholder="请输入作品简介，建议100-500字，简要介绍作品内容、亮点和特色" maxlength="1000"></textarea>
+                        <div class="word-count" id="descriptionCount">0/1000</div>
+                    </div>
+                </div>
+
+                <!-- 作品分类与标签 -->
+                <div class="form-section">
+                    <h2><i class="fas fa-tags"></i> 作品分类与标签</h2>
+
+                    <div class="form-group">
+                        <label class="form-label required" for="workCategory">作品分类</label>
+                        <select id="workCategory" class="form-select">
+                            <option value="">请选择作品分类</option>
+                            <option value="xuanhuan">玄幻奇幻</option>
+                            <option value="wuxia">武侠仙侠</option>
+                            <option value="dushi">都市言情</option>
+                            <option value="lishi">历史军事</option>
+                            <option value="kehuan">科幻灵异</option>
+                            <option value="youxi">游戏竞技</option>
+                            <option value="qinggan">情感生活</option>
+                            <option value="qita">其他</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="workSubcategory">作品子分类</label>
+                        <select id="workSubcategory" class="form-select" disabled>
+                            <option value="">请先选择主分类</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">作品标签</label>
+                        <p style="color: var(--gray); font-size: 14px; margin-bottom: 10px;">请选择1-5个标签，帮助读者了解作品特点（点击标签选择）</p>
+
+                        <div class="tags-container" id="tagsContainer">
+                            <div class="tag" data-tag="穿越">穿越</div>
+                            <div class="tag" data-tag="重生">重生</div>
+                            <div class="tag" data-tag="系统">系统</div>
+                            <div class="tag" data-tag="玄幻">玄幻</div>
+                            <div class="tag" data-tag="修仙">修仙</div>
+                            <div class="tag" data-tag="武侠">武侠</div>
+                            <div class="tag" data-tag="都市">都市</div>
+                            <div class="tag" data-tag="言情">言情</div>
+                            <div class="tag" data-tag="悬疑">悬疑</div>
+                            <div class="tag" data-tag="科幻">科幻</div>
+                            <div class="tag" data-tag="历史">历史</div>
+                            <div class="tag" data-tag="军事">军事</div>
+                            <div class="tag" data-tag="搞笑">搞笑</div>
+                            <div class="tag" data-tag="热血">热血</div>
+                            <div class="tag" data-tag="治愈">治愈</div>
+                        </div>
+
+                        <div class="tag-input-container">
+                            <input type="text" id="tagInput" class="tag-input" placeholder="输入自定义标签（按回车添加）">
+                            <div class="tag-suggestions" id="tagSuggestions"></div>
+                        </div>
+
+                        <div class="selected-tags" id="selectedTags" style="margin-top: 15px; min-height: 30px;">
+                            <p style="font-size: 14px; color: var(--gray);">已选择标签：<span id="selectedTagsList">无</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧预览区域 -->
+            <div class="preview-section">
+                <h2 style="margin-bottom: 20px;"><i class="fas fa-eye"></i> 作品预览</h2>
+
+                <div class="preview-cover" id="previewCover">
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-image" style="font-size: 48px; margin-bottom: 12px; color: #cbd5e1;"></i>
+                        <p>封面预览区域</p>
+                        <p style="font-size: 12px; margin-top: 8px;">上传封面后显示</p>
+                    </div>
+                </div>
+
+                <h3 class="preview-title" id="previewTitle">作品名称</h3>
+                <p class="preview-author" id="previewAuthor">作者：墨染星辰</p>
+
+                <div class="preview-description" id="previewDescription">
+                    作品简介将在这里显示。请在上方输入作品简介，预览将实时更新。
+                </div>
+
+                <div class="preview-tags" id="previewTags">
+                    <div class="preview-tag">示例标签</div>
+                </div>
+
+                <div class="preview-meta">
+                    <div>
+                        <div style="font-size: 12px; margin-bottom: 4px;">分类</div>
+                        <div id="previewCategory">未选择</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; margin-bottom: 4px;">状态</div>
+                        <div>连载中</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; margin-bottom: 4px;">字数</div>
+                        <div>0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 封面上传 -->
+        <div class="form-section">
+            <h2><i class="fas fa-image"></i> 作品封面</h2>
+
+            <div class="cover-upload" id="coverUpload">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>点击或拖拽上传封面图片</p>
+                <p style="font-size: 14px;">支持 JPG、PNG 格式，建议尺寸 600×800 像素，大小不超过 5MB</p>
+                <input type="file" id="coverFile" accept="image/jpeg,image/png">
+            </div>
+
+            <div class="cover-preview" id="coverPreview">
+                <img id="coverPreviewImg" src="" alt="封面预览">
+                <div style="text-align: center; margin-top: 10px;">
+                    <button class="btn btn-outline" id="btnChangeCover" style="padding: 6px 12px; font-size: 14px;">
+                        <i class="fas fa-sync-alt"></i> 更换封面
+                    </button>
+                    <button class="btn btn-outline" id="btnRemoveCover" style="padding: 6px 12px; font-size: 14px;">
+                        <i class="fas fa-trash"></i> 移除封面
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 作品设置 -->
+        <div class="form-section">
+            <h2><i class="fas fa-cog"></i> 作品设置</h2>
+
+            <div class="form-group">
+                <label class="form-label required" for="workStatus">作品状态</label>
+                <select id="workStatus" class="form-select">
+                    <option value="serializing">连载中</option>
+                    <option value="completed">已完结</option>
+                    <option value="paused">暂停更新</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="workVisibility">作品可见性</label>
+                <select id="workVisibility" class="form-select">
+                    <option value="public">公开（所有用户可见）</option>
+                    <option value="private">私密（仅自己可见）</option>
+                    <option value="password">密码保护（需密码访问）</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="passwordField" style="display: none;">
+                <label class="form-label required" for="workPassword">访问密码</label>
+                <input type="password" id="workPassword" class="form-input" placeholder="请输入访问密码">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="updateFrequency">更新频率</label>
+                <select id="updateFrequency" class="form-select">
+                    <option value="daily">每日更新</option>
+                    <option value="weekly">每周更新</option>
+                    <option value="biweekly">每两周更新</option>
+                    <option value="monthly">每月更新</option>
+                    <option value="irregular">不定期更新</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="allowComments" checked>
+                    <label for="allowComments" style="cursor: pointer;">允许读者评论</label>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                    <input type="checkbox" id="allowRewards" checked>
+                    <label for="allowRewards" style="cursor: pointer;">允许读者打赏</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提示信息 -->
+        <div class="hint">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+                <p><strong>创作提示：</strong> 作品名称和简介是吸引读者的关键，请仔细斟酌。上传精美封面可以显著提高作品的点击率。建议先完成前几章内容再发布作品。</p>
+            </div>
+        </div>
+
+        <!-- 表单操作按钮 -->
+        <div class="form-actions">
+            <div>
+                <button class="btn btn-secondary" id="btnSaveDraft">
+                    <i class="fas fa-save"></i> 保存为草稿
+                </button>
+                <button class="btn btn-outline" id="btnResetForm" style="margin-left: 12px;">
+                    <i class="fas fa-redo"></i> 重置表单
+                </button>
+            </div>
+            <div>
+                <button class="btn btn-success" id="btnSubmitForm">
+                    <i class="fas fa-check"></i> 创建作品
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>关于我们</h3>
+                    <ul>
+                        <li><a href="#">网站简介</a></li>
+                        <li><a href="#">联系我们</a></li>
+                        <li><a href="#">加入我们</a></li>
+                        <li><a href="#">友情链接</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>创作服务</h3>
+                    <ul>
+                        <li><a href="#">写作工具</a></li>
+                        <li><a href="#">签约指南</a></li>
+                        <li><a href="#">版权保护</a></li>
+                        <li><a href="#">创作激励</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>帮助中心</h3>
+                    <ul>
+                        <li><a href="#">常见问题</a></li>
+                        <li><a href="#">创作指南</a></li>
+                        <li><a href="#">格式规范</a></li>
+                        <li><a href="#">更新日志</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>关注我们</h3>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-weibo"></i> 作家微博</a></li>
+                        <li><a href="#"><i class="fab fa-weixin"></i> 作家公众号</a></li>
+                        <li><a href="#"><i class="fab fa-qq"></i> 作家QQ群</a></li>
+                        <li><a href="#"><i class="fab fa-github"></i> 开源项目</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2023 小说精品屋 创作服务平台 | 设计制作：前端开发团队</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            // 主题切换功能
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const backgroundAnimation = document.getElementById('backgroundAnimation');
+
+            // 检查本地存储的主题设置
+            const savedTheme = localStorage.getItem('novel-theme') || 'light';
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                createStars();
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                createCreativeParticles();
+            }
+
+            // 切换主题
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+
+                if (body.classList.contains('dark-mode')) {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                    localStorage.setItem('novel-theme', 'dark');
+                    backgroundAnimation.innerHTML = '';
+                    createStars();
+                } else {
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                    localStorage.setItem('novel-theme', 'light');
+                    backgroundAnimation.innerHTML = '';
+                    createCreativeParticles();
+                }
+            });
+
+            // 创建创意粒子动画
+            function createCreativeParticles() {
+                for (let i = 0; i < 25; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'creative-particle';
+
+                    // 随机位置
+                    const left = Math.random() * 100;
+                    particle.style.left = `${left}%`;
+
+                    // 随机颜色
+                    const colors = ['#8b5cf6', '#06d6a0', '#f59e0b', '#ec4899', '#3b82f6'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.backgroundColor = color;
+
+                    // 随机大小
+                    const size = Math.random() * 6 + 3;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+
+                    // 随机动画时长和延迟
+                    const duration = Math.random() * 20 + 15;
+                    const delay = Math.random() * 10;
+                    particle.style.animationDuration = `${duration}s`;
+                    particle.style.animationDelay = `${delay}s`;
+
+                    backgroundAnimation.appendChild(particle);
+                }
+            }
+
+            // 创建星空动画
+            function createStars() {
+                for (let i = 0; i < 80; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+
+                    // 随机位置
+                    const left = Math.random() * 100;
+                    const top = Math.random() * 100;
+                    star.style.left = `${left}%`;
+                    star.style.top = `${top}%`;
+
+                    // 随机大小
+                    const size = Math.random() * 2 + 1;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+
+                    // 随机动画延迟
+                    const delay = Math.random() * 8;
+                    star.style.animationDelay = `${delay}s`;
+
+                    backgroundAnimation.appendChild(star);
+                }
+            }
+
+            // 读者中心按钮功能
+            var btnRC = document.getElementById('btnReaderCenter');
+
+            function b64u(s){ s=(s||'').replace(/-/g,'+').replace(/_/g,'/'); var p=s.length%4; if(p) s+='='.repeat(4-p); try{ return atob(s) }catch(e){ return '' } }
+            function expired(t){ try{ var p=t.split('.')[1]; if(!p) return true; var o=JSON.parse(b64u(p)||'{}'); var e=Number(o.exp||0); return !e || Date.now()>=e*1000 }catch(e){ return true } }
+
+            if (btnRC) {
+                btnRC.addEventListener('click', function(){
+                    var tk = '';
+                    try { tk = localStorage.getItem('auth_token')||'' } catch(e){}
+                    if (tk && !expired(tk)) {
+                        location.href = '/static/readercentor.html';
+                    }
+                    else {
+                        try{ localStorage.removeItem('auth_token'); localStorage.removeItem('last_user_name') }catch(e){};
+                        location.href = '/static/auth.html';
+                    }
+                });
+            }
+
+            // 返回按钮功能
+            document.getElementById('btnBack').addEventListener('click', function() {
+                if (confirm('您有未保存的更改，确定要返回吗？')) {
+                    window.location.href = '/static/create-work.html';
+                }
+            });
+
+            // 字符计数功能
+            const workTitle = document.getElementById('workTitle');
+            const titleCount = document.getElementById('titleCount');
+            const workDescription = document.getElementById('workDescription');
+            const descriptionCount = document.getElementById('descriptionCount');
+
+            workTitle.addEventListener('input', function() {
+                titleCount.textContent = `${workTitle.value.length}/50`;
+                updatePreview();
+            });
+
+            workDescription.addEventListener('input', function() {
+                descriptionCount.textContent = `${workDescription.value.length}/1000`;
+                updatePreview();
+            });
+
+            // 分类联动功能
+            const workCategory = document.getElementById('workCategory');
+            const workSubcategory = document.getElementById('workSubcategory');
+
+            workCategory.addEventListener('change', function() {
+                const category = this.value;
+                workSubcategory.disabled = !category;
+
+                // 清空子分类选项
+                workSubcategory.innerHTML = '<option value="">请选择作品子分类</option>';
+
+                if (category) {
+                    // 根据主分类添加子分类选项
+                    let subcategories = [];
+
+                    switch(category) {
+                        case 'xuanhuan':
+                            subcategories = ['东方玄幻', '异世大陆', '王朝争霸', '高武世界'];
+                            break;
+                        case 'wuxia':
+                            subcategories = ['传统武侠', '现代修真', '古典仙侠', '幻想修仙'];
+                            break;
+                        case 'dushi':
+                            subcategories = ['都市生活', '爱情婚姻', '商战职场', '娱乐明星'];
+                            break;
+                        case 'lishi':
+                            subcategories = ['历史传记', '架空历史', '战争幻想', '军事战争'];
+                            break;
+                        case 'kehuan':
+                            subcategories = ['未来世界', '星际文明', '时空穿梭', '进化变异'];
+                            break;
+                        case 'youxi':
+                            subcategories = ['电子竞技', '虚拟网游', '游戏异界', '体育竞技'];
+                            break;
+                        case 'qinggan':
+                            subcategories = ['青春校园', '婚恋家庭', '生活随笔', '人生感悟'];
+                            break;
+                        case 'qita':
+                            subcategories = ['其他类型'];
+                            break;
+                    }
+
+                    subcategories.forEach(sub => {
+                        const option = document.createElement('option');
+                        option.value = sub;
+                        option.textContent = sub;
+                        workSubcategory.appendChild(option);
+                    });
+                }
+
+                updatePreview();
+            });
+
+            // 标签选择功能
+            const tagsContainer = document.getElementById('tagsContainer');
+            const selectedTagsList = document.getElementById('selectedTagsList');
+            const tagInput = document.getElementById('tagInput');
+            const tagSuggestions = document.getElementById('tagSuggestions');
+            let selectedTags = [];
+            const maxTags = 5;
+
+            // 预设标签点击事件
+            tagsContainer.querySelectorAll('.tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const tagText = this.getAttribute('data-tag');
+
+                    if (selectedTags.includes(tagText)) {
+                        // 如果已选中，则取消选中
+                        selectedTags = selectedTags.filter(t => t !== tagText);
+                        this.classList.remove('selected');
+                    } else {
+                        // 如果未选中，检查是否已达到最大数量
+                        if (selectedTags.length >= maxTags) {
+                            alert(`最多只能选择${maxTags}个标签`);
+                            return;
+                        }
+
+                        selectedTags.push(tagText);
+                        this.classList.add('selected');
+                    }
+
+                    updateSelectedTags();
+                    updatePreview();
+                });
+            });
+
+            // 自定义标签输入
+            tagInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const tagText = this.value.trim();
+
+                    if (tagText && tagText.length > 0 && tagText.length <= 10) {
+                        if (selectedTags.includes(tagText)) {
+                            alert('该标签已存在');
+                            return;
+                        }
+
+                        if (selectedTags.length >= maxTags) {
+                            alert(`最多只能选择${maxTags}个标签`);
+                            return;
+                        }
+
+                        selectedTags.push(tagText);
+                        updateSelectedTags();
+                        updatePreview();
+                        this.value = '';
+                        tagSuggestions.style.display = 'none';
+                    }
+                }
+            });
+
+            tagInput.addEventListener('input', function() {
+                const value = this.value.trim();
+
+                if (value.length === 0) {
+                    tagSuggestions.style.display = 'none';
+                    return;
+                }
+
+                // 模拟标签建议
+                const suggestions = ['奇幻', '悬疑', '爱情', '科幻', '历史', '军事', '搞笑', '热血', '治愈', '校园'];
+                const filtered = suggestions.filter(s => s.includes(value));
+
+                tagSuggestions.innerHTML = '';
+
+                if (filtered.length > 0) {
+                    filtered.forEach(suggestion => {
+                        const div = document.createElement('div');
+                        div.className = 'tag-suggestion';
+                        div.textContent = suggestion;
+                        div.addEventListener('click', function() {
+                            tagInput.value = suggestion;
+                            tagSuggestions.style.display = 'none';
+                        });
+                        tagSuggestions.appendChild(div);
+                    });
+
+                    tagSuggestions.style.display = 'block';
+                } else {
+                    tagSuggestions.style.display = 'none';
+                }
+            });
+
+            // 点击页面其他地方隐藏建议
+            document.addEventListener('click', function(e) {
+                if (!tagInput.contains(e.target) && !tagSuggestions.contains(e.target)) {
+                    tagSuggestions.style.display = 'none';
+                }
+            });
+
+            function updateSelectedTags() {
+                if (selectedTags.length === 0) {
+                    selectedTagsList.textContent = '无';
+                } else {
+                    selectedTagsList.textContent = selectedTags.join(', ');
+                }
+            }
+
+            // 封面上传功能
+            const coverUpload = document.getElementById('coverUpload');
+            const coverFile = document.getElementById('coverFile');
+            const coverPreview = document.getElementById('coverPreview');
+            const coverPreviewImg = document.getElementById('coverPreviewImg');
+            const btnChangeCover = document.getElementById('btnChangeCover');
+            const btnRemoveCover = document.getElementById('btnRemoveCover');
+            const previewCover = document.getElementById('previewCover');
+
+            coverUpload.addEventListener('click', function() {
+                coverFile.click();
+            });
+
+            coverFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+
+                if (file) {
+                    // 检查文件类型
+                    const validTypes = ['image/jpeg', 'image/png'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('只支持 JPG 和 PNG 格式的图片');
+                        return;
+                    }
+
+                    // 检查文件大小（5MB）
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('图片大小不能超过 5MB');
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        coverPreviewImg.src = e.target.result;
+                        coverPreview.classList.add('active');
+                        previewCover.innerHTML = `<img src="${e.target.result}" alt="作品封面" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">`;
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // 拖拽上传
+            coverUpload.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'var(--primary)';
+                this.style.background = 'rgba(139, 92, 246, 0.1)';
+            });
+
+            coverUpload.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '';
+                this.style.background = '';
+            });
+
+            coverUpload.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '';
+                this.style.background = '';
+
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    // 模拟文件输入
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    coverFile.files = dataTransfer.files;
+
+                    // 触发change事件
+                    const event = new Event('change', { bubbles: true });
+                    coverFile.dispatchEvent(event);
+                }
+            });
+
+            btnChangeCover.addEventListener('click', function() {
+                coverFile.click();
+            });
+
+            btnRemoveCover.addEventListener('click', function() {
+                coverPreview.classList.remove('active');
+                coverFile.value = '';
+                previewCover.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <i class="fas fa-image" style="font-size: 48px; margin-bottom: 12px; color: #cbd5e1;"></i>
+                        <p>封面预览区域</p>
+                        <p style="font-size: 12px; margin-top: 8px;">上传封面后显示</p>
+                    </div>
+                `;
+            });
+
+            // 作品可见性切换
+            const workVisibility = document.getElementById('workVisibility');
+            const passwordField = document.getElementById('passwordField');
+
+            workVisibility.addEventListener('change', function() {
+                if (this.value === 'password') {
+                    passwordField.style.display = 'block';
+                } else {
+                    passwordField.style.display = 'none';
+                }
+            });
+
+            // 预览更新功能
+            function updatePreview() {
+                // 更新作品名称
+                const title = workTitle.value || '作品名称';
+                document.getElementById('previewTitle').textContent = title;
+
+                // 更新作品简介
+                const description = workDescription.value || '作品简介将在这里显示。请在上方输入作品简介，预览将实时更新。';
+                document.getElementById('previewDescription').textContent = description;
+
+                // 更新作品分类
+                const category = workCategory.options[workCategory.selectedIndex]?.text || '未选择';
+                document.getElementById('previewCategory').textContent = category;
+
+                // 更新作品标签
+                const previewTags = document.getElementById('previewTags');
+                previewTags.innerHTML = '';
+
+                if (selectedTags.length > 0) {
+                    selectedTags.forEach(tag => {
+                        const tagElement = document.createElement('div');
+                        tagElement.className = 'preview-tag';
+                        tagElement.textContent = tag;
+                        previewTags.appendChild(tagElement);
+                    });
+                } else {
+                    const tagElement = document.createElement('div');
+                    tagElement.className = 'preview-tag';
+                    tagElement.textContent = '示例标签';
+                    previewTags.appendChild(tagElement);
+                }
+            }
+
+            // 初始更新预览
+            updatePreview();
+
+            // 保存草稿功能
+            document.getElementById('btnSaveDraft').addEventListener('click', function() {
+                if (validateForm()) {
+                    // 模拟保存草稿
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+                    this.disabled = true;
+
+                    setTimeout(() => {
+                        alert('草稿保存成功！');
+                        this.innerHTML = '<i class="fas fa-save"></i> 保存为草稿';
+                        this.disabled = false;
+                    }, 1000);
+                }
+            });
+
+            // 重置表单功能
+            document.getElementById('btnResetForm').addEventListener('click', function() {
+                if (confirm('确定要重置表单吗？所有已填写的内容将丢失。')) {
+                    // 重置表单
+                    workTitle.value = '';
+                    workDescription.value = '';
+                    workCategory.selectedIndex = 0;
+                    workSubcategory.innerHTML = '<option value="">请先选择主分类</option>';
+                    workSubcategory.disabled = true;
+
+                    // 重置标签
+                    selectedTags = [];
+                    tagsContainer.querySelectorAll('.tag').forEach(tag => {
+                        tag.classList.remove('selected');
+                    });
+                    updateSelectedTags();
+
+                    // 重置封面
+                    coverPreview.classList.remove('active');
+                    coverFile.value = '';
+                    previewCover.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <i class="fas fa-image" style="font-size: 48px; margin-bottom: 12px; color: #cbd5e1;"></i>
+                            <p>封面预览区域</p>
+                            <p style="font-size: 12px; margin-top: 8px;">上传封面后显示</p>
+                        </div>
+                    `;
+
+                    // 重置设置
+                    workStatus.selectedIndex = 0;
+                    workVisibility.selectedIndex = 0;
+                    passwordField.style.display = 'none';
+                    updateFrequency.selectedIndex = 0;
+                    document.getElementById('allowComments').checked = true;
+                    document.getElementById('allowRewards').checked = true;
+
+                    // 重置字符计数
+                    titleCount.textContent = '0/50';
+                    descriptionCount.textContent = '0/1000';
+
+                    // 重置预览
+                    updatePreview();
+
+                    alert('表单已重置');
+                }
+            });
+
+            // 表单验证函数
+            function validateForm() {
+                if (!workTitle.value.trim()) {
+                    alert('请输入作品名称');
+                    workTitle.focus();
+                    return false;
+                }
+
+                if (!workDescription.value.trim()) {
+                    alert('请输入作品简介');
+                    workDescription.focus();
+                    return false;
+                }
+
+                if (!workCategory.value) {
+                    alert('请选择作品分类');
+                    workCategory.focus();
+                    return false;
+                }
+
+                if (selectedTags.length === 0) {
+                    alert('请至少选择一个作品标签');
+                    return false;
+                }
+
+                if (workVisibility.value === 'password' && !document.getElementById('workPassword').value) {
+                    alert('请设置访问密码');
+                    document.getElementById('workPassword').focus();
+                    return false;
+                }
+
+                return true;
+            }
+
+            // 提交表单功能
+            document.getElementById('btnSubmitForm').addEventListener('click', function() {
+                if (!validateForm()) {
+                    return;
+                }
+
+                // 模拟表单提交
+                const btn = this;
+                const originalText = btn.innerHTML;
+
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 创建中...';
+                btn.disabled = true;
+
+                // 收集表单数据
+                const formData = {
+                    title: workTitle.value.trim(),
+                    author: '墨染星辰',
+                    description: workDescription.value.trim(),
+                    category: workCategory.value,
+                    subcategory: workSubcategory.value,
+                    tags: selectedTags,
+                    status: document.getElementById('workStatus').value,
+                    visibility: document.getElementById('workVisibility').value,
+                    password: document.getElementById('workPassword').value,
+                    updateFrequency: document.getElementById('updateFrequency').value,
+                    allowComments: document.getElementById('allowComments').checked,
+                    allowRewards: document.getElementById('allowRewards').checked,
+                    cover: coverPreviewImg.src || null,
+                    wordCount: 0,
+                    createdAt: new Date().toISOString()
+                };
+
+                console.log('提交的表单数据:', formData);
+
+                // 模拟网络请求延迟
+                setTimeout(() => {
+                    alert('作品创建成功！\n\n作品名称：' + formData.title + '\n\n即将跳转到作品管理页面...');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+
+                    // 在实际应用中，这里会跳转到作品管理页面
+                    // window.location.href = '/static/manage-works.html';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
