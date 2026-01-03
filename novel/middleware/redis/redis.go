@@ -2,13 +2,12 @@ package redis
 
 import (
 	"context"
+	"novel-launch/novel/resource"
 	"os"
 	"strconv"
 
 	goredis "github.com/redis/go-redis/v9"
 )
-
-var cli *goredis.Client
 
 func Init() error {
 	addr := getenv("REDIS_ADDR", "127.0.0.1:6379")
@@ -19,11 +18,11 @@ func Init() error {
 	if err := c.Ping(context.Background()).Err(); err != nil {
 		return err
 	}
-	cli = c
+	resource.Rdscli = c
 	return nil
 }
 
-func Get() *goredis.Client { return cli }
+func Get() *goredis.Client { return resource.Rdscli }
 
 func getenv(key, def string) string {
 	v := os.Getenv(key)

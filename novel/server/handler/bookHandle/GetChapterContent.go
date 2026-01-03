@@ -17,6 +17,8 @@ type ChapterContentResponse struct {
 }
 
 func GetChapterContent(ctx *gin.Context, req ChapterContentRequest) (error, *ChapterContentResponse) {
+	// TODO: 加一层缓存
+
 	d := dao.NewContentDAO(db.Get())
 	c, err := d.GetByChapter(ctx, req.BookId, req.ChapterId)
 	if err != nil {

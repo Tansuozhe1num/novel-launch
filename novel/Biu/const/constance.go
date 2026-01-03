@@ -2,6 +2,9 @@ package constance
 
 const (
 	RankCount = 10
+
+	TokenRate     = 20.0 / 1000 // 令牌桶填充速度, 20QPS
+	TokenCapacity = 1000        // 令牌桶容量
 )
 
 const (
