@@ -33,6 +33,11 @@ func SetupRouter() *gin.Engine {
 		User.POST("/logout", authjwt.AuthJWT(), user.Logout)
 	}
 
+	Category := r.Group("/category")
+	{
+		Category.GET("/list", book.GetDefaultCategories)
+	}
+
 	r.Static("/static", "../fronter")
 	r.StaticFile("/", "../fronter/index.html")
 	r.StaticFile("/book.html", "../fronter/book.html")

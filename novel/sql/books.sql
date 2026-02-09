@@ -1,5 +1,6 @@
 CREATE TABLE `books` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `categoty_id` BIGINT DEFAULT 0,
   `book_name` VARCHAR(255) NOT NULL,
   `author` VARCHAR(100) NOT NULL,
   `desc` TEXT,
