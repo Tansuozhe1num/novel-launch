@@ -9,7 +9,7 @@ import (
 	"github.com/tmc/langchaingo/llms/openai"
 )
 
-func invoke() {
+func Invoke() {
 	// 初始化客户端 (兼容 OpenAI 协议的模型，如 DeepSeek, Moonshot 等都可以用)
 	llm, err := openai.New(
 		openai.WithBaseURL("https://api.deepseek.com/v1"), // 替换为国内大模型地址

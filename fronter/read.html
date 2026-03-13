@@ -3,94 +3,572 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线阅读</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>在线阅读 - 小说精品屋</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
-        :root{ --primary:#8b5cf6; --dark:#1e293b; --bg:#f8fafc }
-        body{ margin:0; font-family:system-ui; background:var(--bg); color:var(--dark) }
-        header{ position:sticky; top:0; z-index:10; background:#fff; border-bottom:1px solid #eee; padding:10px 14px; display:flex; align-items:center; gap:12px }
-        .container{ width:95%; max-width:1200px; margin:0 auto }
-        .title{ font-weight:700 }
-        .toolbar{ margin-left:auto; display:flex; gap:8px }
-        .btn{ border:1px solid #ddd; background:#fff; padding:6px 12px; border-radius:8px; cursor:pointer }
-        .btn.primary{ border-color:var(--primary); color:#fff; background:var(--primary) }
-        main{ display:grid; grid-template-columns: 280px 1fr; gap:16px; padding:16px }
-        .sidebar{ background:#fff; border:1px solid #eee; border-radius:12px; overflow:auto; max-height:calc(100vh - 80px) }
-        .chapter{ padding:10px 12px; border-bottom:1px dashed #eee; cursor:pointer }
-        .chapter.active{ background:rgba(139,92,246,.08) }
-        .reader{ background:#fff; border:1px solid #eee; border-radius:12px; padding:18px; line-height:1.9; white-space:pre-wrap; min-height:60vh }
-        .reader h1{ font-size:20px; margin:0 0 12px }
-        .nav{ display:flex; gap:8px; margin-top:12px }
+        :root {
+            /* 水墨风配色 - 阅读器专用 */
+            --primary: #2c2c2c;
+            --primary-hover: #000000;
+            --accent: #b91c1c;
+            
+            --bg-body: #f7f5f0; /* 宣纸背景 */
+            --bg-paper: #fdfbf7; /* 更亮的宣纸色用于正文区域 */
+            --bg-sidebar: #f0eee9;
+            
+            --text-main: #292524;
+            --text-body: #1c1917;
+            --text-secondary: #57534e;
+            
+            --border: #e7e5e4;
+            
+            --radius: 0.25rem;
+            --font-ui: 'Noto Serif SC', serif;
+            --font-read: 'Noto Serif SC', serif;
+            --font-art: 'Ma Shan Zheng', cursive;
+            
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode {
+            --bg-body: #1c1917;
+            --bg-paper: #292524;
+            --bg-sidebar: #1c1917;
+            --text-main: #a8a29e;
+            --text-body: #d6d3d1;
+            --border: #44403c;
+            --primary: #a8a29e;
+        }
+        
+        body.sepia-mode {
+            --bg-body: #e3d5b8; /* 仿古纸 */
+            --bg-paper: #f0e6cc;
+            --bg-sidebar: #dccaa8;
+            --text-main: #5c4033;
+            --text-body: #422a18;
+            --border: #c9bca0;
+            --primary: #5c4033;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-ui);
+            background-color: var(--bg-body);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2357534e' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            height: 3.5rem;
+            background-color: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 20;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        .book-title { font-weight: 700; color: var(--primary); font-size: 1.1rem; font-family: var(--font-art); }
+        .chapter-title-header { font-size: 0.9rem; color: var(--text-secondary); opacity: 0.8; }
+
+        .header-actions { display: flex; gap: 0.5rem; }
+        
+        .btn-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.25rem;
+            border: none;
+            background: transparent;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .btn-icon:hover { background-color: rgba(0,0,0,0.05); color: var(--accent); }
+
+        /* Main Layout */
+        .layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .sidebar.collapsed {
+            width: 0;
+            overflow: hidden;
+            border-right: none;
+        }
+
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            color: var(--primary);
+            font-family: var(--font-art);
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .chapter-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+
+        .chapter-item {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            border-left: 3px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-bottom: 1px dashed rgba(0,0,0,0.05);
+        }
+
+        .chapter-item:hover {
+            background-color: rgba(0,0,0,0.02);
+            color: var(--accent);
+            padding-left: 1.5rem;
+        }
+
+        .chapter-item.active {
+            background-color: rgba(0,0,0,0.03);
+            color: var(--primary);
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Reading Area */
+        .reading-area {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+
+        .paper {
+            max-width: 900px;
+            margin: 2rem auto;
+            background-color: var(--bg-paper);
+            padding: 4rem 5rem;
+            min-height: calc(100% - 4rem);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        
+        /* 纸张纹理叠加 */
+        .paper::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .chapter-title {
+            position: relative;
+            font-family: var(--font-art);
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 3rem;
+            color: var(--primary);
+            text-align: center;
+            z-index: 1;
+        }
+        
+        /* 标题下方的红色印章装饰 */
+        .chapter-title::after {
+            content: '';
+            display: block;
+            width: 40px; height: 2px;
+            background-color: var(--accent);
+            margin: 1rem auto 0;
+        }
+
+        .chapter-content {
+            position: relative;
+            font-family: var(--font-read);
+            font-size: 1.3rem;
+            line-height: 2;
+            color: var(--text-body);
+            white-space: pre-wrap;
+            text-align: justify;
+            z-index: 1;
+        }
+        
+        .chapter-content p { margin-bottom: 2rem; text-indent: 2em; }
+
+        .nav-buttons {
+            max-width: 900px;
+            margin: 2rem auto;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1rem 3rem;
+        }
+
+        .nav-btn {
+            padding: 0.75rem 2rem;
+            background-color: var(--bg-paper);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+            font-family: var(--font-ui);
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: absolute;
+            top: 3.5rem;
+            right: 1.5rem;
+            background-color: var(--bg-paper);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 280px;
+            display: none;
+            z-index: 30;
+        }
+        
+        .settings-panel.open { display: block; }
+        
+        .setting-group { margin-bottom: 1.5rem; }
+        .setting-label { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.75rem; display: block; color: var(--text-secondary); }
+        
+        .theme-options { display: flex; gap: 0.75rem; }
+        .theme-opt {
+            width: 2.5rem; height: 2.5rem;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            position: relative;
+        }
+        .theme-opt.light { background: #f7f5f0; }
+        .theme-opt.dark { background: #1c1917; border-color: #44403c; }
+        .theme-opt.sepia { background: #e3d5b8; border-color: #c9bca0; }
+        .theme-opt.active { border-color: var(--accent); transform: scale(1.1); }
+        .theme-opt.active::after {
+            content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: var(--accent); font-size: 0.8rem;
+        }
+
+        .font-size-ctrl { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.03); padding: 0.25rem; border-radius: 4px; }
+        .font-btn { width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); }
+        .font-btn:hover { color: var(--accent); }
+        .font-val { font-size: 1rem; font-weight: 600; font-family: monospace; }
+
+        @media (max-width: 768px) {
+            .sidebar { position: absolute; height: 100%; transform: translateX(-100%); width: 85%; box-shadow: 10px 0 20px rgba(0,0,0,0.2); }
+            .sidebar.open { transform: translateX(0); }
+            .paper { margin: 0; padding: 2rem 1.5rem; border-radius: 0; min-height: 100%; border: none; }
+            .chapter-title { font-size: 1.6rem; margin-bottom: 2rem; }
+            .chapter-content { font-size: 1.15rem; line-height: 1.8; }
+            .nav-buttons { padding: 1rem; }
+        }
     </style>
-    </head>
+</head>
 <body>
     <header>
-        <div class="container" style="display:flex; align-items:center; gap:12px">
-            <a href="/" class="btn">首页</a>
-            <div id="bookTitle" class="title"></div>
-            <div id="bookAuthor" style="color:#64748b"></div>
-            <div class="toolbar">
-                <button id="prev" class="btn">上一章</button>
-                <button id="next" class="btn">下一章</button>
+        <div class="header-left">
+            <a href="/" class="btn-icon" title="返回首页"><i class="fas fa-long-arrow-alt-left"></i></a>
+            <button class="btn-icon" id="toggleSidebar" title="目录"><i class="fas fa-bars"></i></button>
+            <div>
+                <div class="book-title" id="bookTitle">加载中...</div>
+                <div class="chapter-title-header" id="headerChapterTitle"></div>
             </div>
         </div>
-    </header>
-    <main class="container">
-        <div class="sidebar" id="chapterList"></div>
-        <div class="reader">
-            <h1 id="chapterTitle"></h1>
-            <div id="content"></div>
-            <div class="nav"><button id="prev2" class="btn">上一章</button><button id="next2" class="btn">下一章</button></div>
+        <div class="header-actions">
+            <button class="btn-icon" id="toggleSettings" title="设置"><i class="fas fa-font"></i></button>
+            <button class="btn-icon" id="toggleDark" title="夜间模式"><i class="fas fa-moon"></i></button>
         </div>
-    </main>
+    </header>
+
+    <div class="settings-panel" id="settingsPanel">
+        <div class="setting-group">
+            <span class="setting-label">背景雅色</span>
+            <div class="theme-options">
+                <div class="theme-opt light" onclick="setTheme('light')" title="宣纸白"></div>
+                <div class="theme-opt sepia" onclick="setTheme('sepia')" title="古籍黄"></div>
+                <div class="theme-opt dark" onclick="setTheme('dark')" title="墨韵黑"></div>
+            </div>
+        </div>
+        <div class="setting-group">
+            <span class="setting-label">字体大小</span>
+            <div class="font-size-ctrl">
+                <div class="font-btn" onclick="changeFontSize(-1)"><i class="fas fa-minus"></i></div>
+                <div class="font-val" id="fontSizeDisplay">20</div>
+                <div class="font-btn" onclick="changeFontSize(1)"><i class="fas fa-plus"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">目录</div>
+            <div class="chapter-list" id="chapterList">
+                <!-- Chapters -->
+            </div>
+        </aside>
+
+        <main class="reading-area" id="readingArea">
+            <div class="paper" id="paper">
+                <h1 class="chapter-title" id="chapterTitle"></h1>
+                <div class="chapter-content" id="content">
+                    <div style="text-align: center; color: var(--text-secondary); margin-top: 5rem;">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p style="margin-top: 1rem; font-family: var(--font-ui);">正在展卷...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prevBtn" onclick="goPrev()">上一章</button>
+                <button class="nav-btn" id="nextBtn" onclick="goNext()">下一章</button>
+            </div>
+        </main>
+    </div>
 
     <script>
-        function q(k){ const u = new URL(location.href); return u.searchParams.get(k) }
-        function fetchJSON(url){ return fetch(url).then(r=>r.json()) }
-        function getData(resp){ if(resp && typeof resp==='object' && 'code' in resp){ return resp.code===0 ? resp.data : null } return resp }
-        function pick(o){ for(let i=1;i<arguments.length;i++){ const v=o&&o[arguments[i]]; if(v!==undefined&&v!==null) return v } return '' }
-        const bid = Number(q('bookId'))||0; let cid = Number(q('chapterId'))||0; let chapters=[]; let curIndex=0;
+        // State
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = Number(urlParams.get('bookId')) || 0;
+        let chapterId = Number(urlParams.get('chapterId')) || 0;
+        let chapters = [];
+        let currentIndex = 0;
+        let currentFontSize = 20;
 
-        function loadBook(){
-            return fetchJSON('/book/showBookById?bookId='+bid).then(resp=>{
-                const d = getData(resp) || {};
-                document.getElementById('bookTitle').textContent = pick(d,'bookName');
-                document.getElementById('bookAuthor').textContent = '作者：'+pick(d,'author');
-            })
-        }
-        function loadChapters(){
-            return fetchJSON('/book/listChapters?bookId='+bid).then(resp=>{
-                const data = getData(resp);
-                chapters = Array.isArray(data)?data:[];
-                const list = document.getElementById('chapterList'); list.innerHTML='';
-                chapters.forEach((c,i)=>{
-                    const el = document.createElement('div'); el.className='chapter'; el.textContent = (i+1)+'. '+pick(c,'title'); el.dataset.id = pick(c,'id');
-                    el.onclick = function(){ cid = Number(el.dataset.id); curIndex = i; renderActive(); loadContent(); updateNav(); history.replaceState(null,'','/read.html?bookId='+bid+'&chapterId='+cid) }
-                    list.appendChild(el);
-                    if (!cid && i===0) { cid = Number(el.dataset.id); curIndex = 0 }
-                });
-                renderActive(); updateNav();
-            })
-        }
-        function loadContent(){
-            return fetchJSON('/book/chapterContent?bookId='+bid+'&chapterId='+cid).then(resp=>{
-                const d = getData(resp) || {}; const title = pick(chapters[curIndex],'title');
-                document.getElementById('chapterTitle').textContent = title || ('第'+(curIndex+1)+'章');
-                document.getElementById('content').textContent = pick(d,'content','Content');
-            })
-        }
-        function renderActive(){
-            Array.from(document.querySelectorAll('.chapter')).forEach((e,idx)=>{ e.classList.toggle('active', idx===curIndex) })
-        }
-        function updateNav(){
-            document.getElementById('prev').disabled = (curIndex<=0); document.getElementById('prev2').disabled = (curIndex<=0);
-            document.getElementById('next').disabled = (curIndex>=chapters.length-1); document.getElementById('next2').disabled = (curIndex>=chapters.length-1);
-        }
-        function goPrev(){ if(curIndex>0){ curIndex--; cid = Number(pick(chapters[curIndex],'id')); renderActive(); loadContent(); updateNav(); history.replaceState(null,'','/read.html?bookId='+bid+'&chapterId='+cid) } }
-        function goNext(){ if(curIndex<chapters.length-1){ curIndex++; cid = Number(pick(chapters[curIndex],'id')); renderActive(); loadContent(); updateNav(); history.replaceState(null,'','/read.html?bookId='+bid+'&chapterId='+cid) } }
-        document.getElementById('prev').onclick = goPrev; document.getElementById('prev2').onclick = goPrev; document.getElementById('next').onclick = goNext; document.getElementById('next2').onclick = goNext;
+        // Elements
+        const els = {
+            bookTitle: document.getElementById('bookTitle'),
+            headerChapterTitle: document.getElementById('headerChapterTitle'),
+            chapterTitle: document.getElementById('chapterTitle'),
+            content: document.getElementById('content'),
+            chapterList: document.getElementById('chapterList'),
+            sidebar: document.getElementById('sidebar'),
+            readingArea: document.getElementById('readingArea'),
+            paper: document.getElementById('paper'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn')
+        };
 
-        Promise.resolve().then(loadBook).then(loadChapters).then(loadContent)
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            loadBook();
+            loadChapters().then(() => {
+                if(chapterId) {
+                    currentIndex = chapters.findIndex(c => c.id == chapterId);
+                    if(currentIndex === -1) currentIndex = 0;
+                }
+                loadContent();
+            });
+
+            // Event Listeners
+            document.getElementById('toggleSidebar').onclick = () => {
+                els.sidebar.classList.toggle('collapsed');
+                if(window.innerWidth <= 768) els.sidebar.classList.toggle('open');
+            };
+            
+            document.getElementById('toggleSettings').onclick = (e) => {
+                e.stopPropagation();
+                document.getElementById('settingsPanel').classList.toggle('open');
+            };
+            
+            document.getElementById('toggleDark').onclick = () => {
+                const isDark = document.body.classList.contains('dark-mode');
+                setTheme(isDark ? 'light' : 'dark');
+            };
+
+            document.body.onclick = (e) => {
+                if(!e.target.closest('#settingsPanel') && !e.target.closest('#toggleSettings')) {
+                    document.getElementById('settingsPanel').classList.remove('open');
+                }
+            };
+        });
+
+        // Theme & Settings
+        function initTheme() {
+            const theme = localStorage.getItem('reader-theme') || 'light';
+            setTheme(theme);
+            const fs = localStorage.getItem('reader-fontsize');
+            if(fs) {
+                currentFontSize = parseInt(fs);
+                updateFontSize();
+            }
+        }
+
+        function setTheme(theme) {
+            document.body.classList.remove('dark-mode', 'sepia-mode');
+            if(theme === 'dark') document.body.classList.add('dark-mode');
+            if(theme === 'sepia') document.body.classList.add('sepia-mode');
+            localStorage.setItem('reader-theme', theme);
+            
+            // Update icons
+            document.querySelectorAll('.theme-opt').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.theme-opt.${theme}`)?.classList.add('active');
+        }
+
+        function changeFontSize(delta) {
+            currentFontSize += delta;
+            if(currentFontSize < 14) currentFontSize = 14;
+            if(currentFontSize > 32) currentFontSize = 32;
+            updateFontSize();
+        }
+
+        function updateFontSize() {
+            document.getElementById('fontSizeDisplay').textContent = currentFontSize;
+            els.content.style.fontSize = currentFontSize + 'px';
+            localStorage.setItem('reader-fontsize', currentFontSize);
+        }
+
+        // Data Loading
+        async function fetchJSON(url) {
+            try {
+                const r = await fetch(url);
+                return await r.json();
+            } catch(e) {
+                console.error(e);
+                return null;
+            }
+        }
+
+        async function loadBook() {
+            const resp = await fetchJSON('/book/showBookById?bookId=' + bookId);
+            if(resp && (resp.code === 0 || resp.data)) {
+                const data = resp.data || resp;
+                els.bookTitle.textContent = data.bookName || '未命名书籍';
+                document.title = (data.bookName || '阅读') + ' - 小说精品屋';
+            }
+        }
+
+        async function loadChapters() {
+            const resp = await fetchJSON('/book/listChapters?bookId=' + bookId);
+            if(resp) {
+                const list = Array.isArray(resp) ? resp : (resp.data || []);
+                chapters = list;
+                renderChapterList();
+            }
+        }
+
+        function renderChapterList() {
+            els.chapterList.innerHTML = '';
+            chapters.forEach((c, i) => {
+                const item = document.createElement('div');
+                item.className = 'chapter-item';
+                if(i === currentIndex) item.classList.add('active');
+                item.textContent = c.title || `第${i+1}章`;
+                item.onclick = () => {
+                    currentIndex = i;
+                    loadContent();
+                    if(window.innerWidth <= 768) els.sidebar.classList.remove('open');
+                };
+                els.chapterList.appendChild(item);
+            });
+        }
+
+        async function loadContent() {
+            if(!chapters[currentIndex]) return;
+            const c = chapters[currentIndex];
+            chapterId = c.id;
+            
+            // Update URL without reload
+            const newUrl = `${window.location.pathname}?bookId=${bookId}&chapterId=${chapterId}`;
+            window.history.replaceState(null, '', newUrl);
+
+            // Update UI
+            els.chapterTitle.textContent = c.title;
+            els.headerChapterTitle.textContent = c.title;
+            els.content.innerHTML = '<div style="text-align:center;padding:5rem"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+            
+            // Scroll to top
+            els.readingArea.scrollTop = 0;
+            
+            // Highlight list
+            document.querySelectorAll('.chapter-item').forEach((el, i) => {
+                el.classList.toggle('active', i === currentIndex);
+                if(i === currentIndex) el.scrollIntoView({block: 'center', behavior: 'smooth'});
+            });
+
+            // Fetch Content
+            const resp = await fetchJSON(`/book/chapterContent?bookId=${bookId}&chapterId=${chapterId}`);
+            if(resp && (resp.code === 0 || resp.data)) {
+                const data = resp.data || resp;
+                // Format content: replace newlines with <p>
+                const text = data.content || '暂无内容';
+                // Simple formatting
+                const html = text.split('\n').map(line => line.trim() ? `<p>${line}</p>` : '').join('');
+                els.content.innerHTML = html;
+            } else {
+                els.content.innerHTML = '<p style="text-align:center;color:var(--accent)">加载失败，请重试</p>';
+            }
+            
+            updateNavButtons();
+        }
+
+        function updateNavButtons() {
+            els.prevBtn.disabled = currentIndex <= 0;
+            els.nextBtn.disabled = currentIndex >= chapters.length - 1;
+        }
+
+        function goPrev() {
+            if(currentIndex > 0) {
+                currentIndex--;
+                loadContent();
+            }
+        }
+
+        function goNext() {
+            if(currentIndex < chapters.length - 1) {
+                currentIndex++;
+                loadContent();
+            }
+        }
     </script>
 </body>
 </html>
